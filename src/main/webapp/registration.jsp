@@ -5,6 +5,7 @@
     <title>2FA with Authy</title>
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/authy-forms.css/2.2/form.authy.min.css" rel="stylesheet">
     <link href="css/site.css" rel="stylesheet" >
 </head>
 <body>
@@ -55,5 +56,7 @@
         Made with <i class="fa fa-heart"></i> by your pals
         <a href="http://www.twilio.com">@twilio</a>
     </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/authy-forms.js/2.2/form.authy.min.js"></script>
 </body>
 </html>
