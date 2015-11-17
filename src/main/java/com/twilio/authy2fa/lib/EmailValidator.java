@@ -1,4 +1,4 @@
-package com.twilio.authy2fa.utils;
+package com.twilio.authy2fa.lib;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

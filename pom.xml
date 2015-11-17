@@ -26,7 +26,14 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4-1204-jdbc42</version>
+            <version>9.4-1205-jdbc42</version>
+        </dependency>
+
+        <!-- JPA -->
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
+            <version>2.6.1</version>
         </dependency>
 
         <!-- Migrations -->

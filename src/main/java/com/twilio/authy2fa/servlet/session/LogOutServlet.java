@@ -1,6 +1,6 @@
 package com.twilio.authy2fa.servlet.session;
 
-import com.twilio.authy2fa.utils.SessionManager;
+import com.twilio.authy2fa.lib.SessionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
