@@ -9,6 +9,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/welcome"})
 public class WelcomeServlet extends HttpServlet {
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher("/welcome.jsp").forward(request, response);
