@@ -31,7 +31,7 @@ public class UserService {
         return user;
     }
 
-    public User create(User user) {
+    public User save(User user) {
         getTransaction().begin();
         manager.persist(user);
         getTransaction().commit();

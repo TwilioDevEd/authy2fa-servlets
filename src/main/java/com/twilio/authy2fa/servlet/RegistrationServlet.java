@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet{
 
         if (validateRequest(request, name, email, password, countryCode, phoneNumber)) {
 
-            User user = service.create(new User(name, email, password, countryCode, phoneNumber));
+            User user = service.save(new User(name, email, password, countryCode, phoneNumber));
 
             sessionManager.LogIn(request, user.getId());
             response.sendRedirect("/account");
