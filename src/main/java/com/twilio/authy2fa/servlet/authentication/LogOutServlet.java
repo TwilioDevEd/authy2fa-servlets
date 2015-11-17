@@ -1,4 +1,4 @@
-package com.twilio.authy2fa.servlet.session;
+package com.twilio.authy2fa.servlet.authentication;
 
 import com.twilio.authy2fa.lib.SessionManager;
 
