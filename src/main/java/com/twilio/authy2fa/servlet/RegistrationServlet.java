@@ -1,6 +1,7 @@
 package com.twilio.authy2fa.servlet;
 
 import com.twilio.authy2fa.utils.EmailValidator;
+import com.twilio.authy2fa.utils.SessionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,8 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet{
+
+    private static final SessionManager SessionManager = new SessionManager();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,8 +34,8 @@ public class RegistrationServlet extends HttpServlet{
             //
             // Create User
             // Create session with user ID.
-            //   * Probably introduce a SessionManager
-            // Redirect to user account.
+            SessionManager.LogIn(request);
+            response.sendRedirect("/account");
         } else {
             preserveStatusRequest(request, name, email, countryCode, phoneNumber);
             request.getRequestDispatcher("/registration.jsp").forward(request, response);
