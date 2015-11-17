@@ -11,11 +11,11 @@
     <section id="main" class="container">
         <!-- Nav Bar -->
         <nav class="navbar navbar-default">
-          <a class="navbar-brand" href="/">2FA with Authy</a>
-          <p id="nav-links" class="navbar-text pull-right">
-              <a href="#users">Sign Up</a> or
-              <a href="/login">Log in</a>
-          </p>
+            <a class="navbar-brand" href="/">2FA with Authy</a>
+            <p id="nav-links" class="navbar-text pull-right">
+                <a href="/registration">Sign Up</a> or
+                <a href="/login">Log in</a>
+            </p>
         </nav>
 
         <h1>Let's Do The 2FA with Authy!</h1>
@@ -26,7 +26,7 @@
         </p>
 
         <p>
-            <a href="#users">Sign up</a> or <a href="/login">Log in</a> to get started.
+            <a href="/registration">Sign up</a> or <a href="/login">Log in</a> to get started.
         </p>
     </section>
     <footer class="container">

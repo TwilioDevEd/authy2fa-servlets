@@ -11,11 +11,11 @@
     <section id="main" class="container">
         <!-- Nav Bar -->
         <nav class="navbar navbar-default">
-          <a class="navbar-brand" href="/">2FA with Authy</a>
-          <p id="nav-links" class="navbar-text pull-right">
-              <a href="#users">Sign Up</a> or
-              <a href="/login">Log in</a>
-          </p>
+            <a class="navbar-brand" href="/">2FA with Authy</a>
+            <p id="nav-links" class="navbar-text pull-right">
+                <a href="/registration">Sign Up</a> or
+                <a href="/login">Log in</a>
+            </p>
         </nav>
 
         <small>${data}</small>
