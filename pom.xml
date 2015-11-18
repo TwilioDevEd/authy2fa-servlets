@@ -17,6 +17,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.authy</groupId>
+            <artifactId>authy-java</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/authy-java.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
@@ -75,6 +83,9 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
+                <configuration>
+                    <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

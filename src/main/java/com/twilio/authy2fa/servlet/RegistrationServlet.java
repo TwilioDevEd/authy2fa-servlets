@@ -1,5 +1,6 @@
 package com.twilio.authy2fa.servlet;
 
+import com.authy.AuthyApiClient;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
 import com.twilio.authy2fa.lib.EmailValidator;
@@ -36,6 +37,13 @@ public class RegistrationServlet extends HttpServlet{
         if (validateRequest(request, name, email, password, countryCode, phoneNumber)) {
 
             User user = service.save(new User(name, email, password, countryCode, phoneNumber));
+
+            AuthyApiClient authyClient = new AuthyApiClient(System.getenv("AUTHY_API_KEY"));
+            com.authy.api.User authyUser = authyClient.getUsers().createUser(user.getEmail(), user.getPhoneNumber(), user.getCountryCode());
+            if (authyUser.isOk()) {
+                user.setAuthyId(Integer.toString(authyUser.getId()));
+                service.save(user);
+            }
 
             sessionManager.LogIn(request, user.getId());
             response.sendRedirect("/account");
