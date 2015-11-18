@@ -27,8 +27,8 @@ public class LogInServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        User user = service.findByCredentials(email, password);
-        if (user != null) {
+        User user = service.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
             sessionManager.LogIn(request, user.getId());
             response.sendRedirect("/welcome");
         } else {

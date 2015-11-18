@@ -16,13 +16,12 @@ public class UserService {
         return manager.find(User.class, id);
     }
 
-    public User findByCredentials(String email, String password) {
+    public User findByEmail(String email) {
         User user = null;
 
         try {
-            user = (User) manager.createQuery("SELECT u FROM User u WHERE u.email = :email AND u.password = :password")
+            user = (User) manager.createQuery("SELECT u FROM User u WHERE u.email = :email")
                     .setParameter("email", email)
-                    .setParameter("password", password)
                     .getSingleResult();
         } catch (NoResultException ex) {
             System.out.println(ex.getMessage());
