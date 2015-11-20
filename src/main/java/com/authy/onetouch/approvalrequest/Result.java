@@ -30,4 +30,8 @@ public class Result {
     public Map<String, String> getApprovalRequest() {
         return approvalRequest;
     }
+
+    public boolean isOk() {
+        return success;
+    }
 }
