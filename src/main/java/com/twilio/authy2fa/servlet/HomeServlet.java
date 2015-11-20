@@ -1,7 +1,5 @@
 package com.twilio.authy2fa.servlet;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
