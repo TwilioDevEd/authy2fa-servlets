@@ -45,7 +45,7 @@ public class RegistrationServlet extends HttpServlet{
                 service.save(user);
             }
 
-            sessionManager.LogIn(request, user.getId());
+            sessionManager.logIn(request, user.getId());
             response.sendRedirect("/account");
         } else {
             preserveStatusRequest(request, name, email, countryCode, phoneNumber);

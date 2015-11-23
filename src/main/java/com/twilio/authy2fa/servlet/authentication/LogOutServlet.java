@@ -15,7 +15,7 @@ public class LogOutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        SessionManager.LogOut(request);
+        SessionManager.logOut(request);
         response.sendRedirect("login.jsp");
     }
 }

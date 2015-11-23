@@ -20,7 +20,7 @@ public class AccountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = sessionManager.LoggedUserId(request);
+        long userId = sessionManager.getLoggedUserId(request);
         User user = service.find(userId);
 
         request.setAttribute("name", user.getName());

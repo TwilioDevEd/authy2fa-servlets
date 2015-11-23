@@ -33,7 +33,7 @@ public class LogInServlet extends HttpServlet {
 
         User user = service.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
-            sessionManager.LogIn(request, user.getId());
+            sessionManager.logIn(request, user.getId());
             sendApprovalRequest(user);
 
             response.sendRedirect("/welcome");

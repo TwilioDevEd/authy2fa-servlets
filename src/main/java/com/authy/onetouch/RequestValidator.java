@@ -16,6 +16,8 @@ public class RequestValidator {
     private final String authyApiKey;
     private final HttpServletRequest request;
 
+    public final static String UNAUTHORIZED = "unauthorized";
+
     /**
      * Request Validator initializer
      *
@@ -27,7 +29,7 @@ public class RequestValidator {
         this.request = request;
     }
 
-    public boolean validate() throws IOException {
+    public String validate() throws IOException {
 
         String requestContent = getRequestContent(this.request.getReader());
 
@@ -47,14 +49,14 @@ public class RequestValidator {
             computedDigest = computeDigest(data, this.authyApiKey);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            return false;
+            return UNAUTHORIZED;
         } catch (InvalidKeyException e) {
             e.printStackTrace();
-            return false;
+            return UNAUTHORIZED;
         }
 
         String authySignature = this.request.getHeader("X-Authy-Signature");
-        return computedDigest.equals(authySignature);
+        return computedDigest.equals(authySignature) ? content.getString("status") : UNAUTHORIZED;
     }
 
     protected String getRequestContent(BufferedReader bufferedReader) throws IOException {
