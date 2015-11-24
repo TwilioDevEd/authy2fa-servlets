@@ -39,6 +39,19 @@ public class SessionManagerTest {
 
         verify(session).setAttribute(SessionManager.AUTHENTICATED, true);
         verify(session).setAttribute(SessionManager.USER_ID, userId);
+        verify(session).removeAttribute(SessionManager.PARTIALLY_AUTHENTICATED);
+    }
+
+    @Test
+    public void partialLogInAddsPartiallyAuthenticatedAttributeToSession() {
+        when(request.getSession()).thenReturn(session);
+
+        long userId = USER_ID;
+        SessionManager sessionManager = new SessionManager();
+        sessionManager.partialLogIn(request, userId);
+
+        verify(session).setAttribute(SessionManager.PARTIALLY_AUTHENTICATED, true);
+        verify(session).setAttribute(SessionManager.USER_ID, userId);
     }
 
     @Test
@@ -69,6 +82,17 @@ public class SessionManagerTest {
 
         SessionManager sessionManager = new SessionManager();
         boolean result = sessionManager.isAuthenticated(request);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isPartiallyAuthorized() {
+        when(request.getSession(false)).thenReturn(session);
+        when(session.getAttribute(SessionManager.PARTIALLY_AUTHENTICATED)).thenReturn(true);
+
+        SessionManager sessionManager = new SessionManager();
+        boolean result = sessionManager.isPartiallyAuthenticated(request);
 
         assertTrue(result);
     }

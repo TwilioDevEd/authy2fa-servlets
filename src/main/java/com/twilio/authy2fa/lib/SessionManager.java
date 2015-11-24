@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 public class SessionManager {
 
     public static final String AUTHENTICATED = "authenticated";
+    public static final String PARTIALLY_AUTHENTICATED = "partially-authenticated";
     public static final String USER_ID = "user-id";
 
     private static final int MAX_INACTIVE_INTERVAL = 30 * 60;
@@ -13,6 +14,14 @@ public class SessionManager {
     public void logIn(HttpServletRequest request, long userId) {
         HttpSession session = request.getSession();
         session.setAttribute(AUTHENTICATED, true);
+        session.removeAttribute(PARTIALLY_AUTHENTICATED);
+        session.setAttribute(USER_ID, userId);
+        session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
+    }
+
+    public void partialLogIn(HttpServletRequest request, long userId) {
+        HttpSession session = request.getSession();
+        session.setAttribute(PARTIALLY_AUTHENTICATED, true);
         session.setAttribute(USER_ID, userId);
         session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
     }
@@ -37,6 +46,15 @@ public class SessionManager {
         HttpSession session = request.getSession(false);
         if (session != null) {
             return (boolean) session.getAttribute(AUTHENTICATED);
+        }
+
+        return false;
+    }
+
+    public boolean isPartiallyAuthenticated(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return (boolean) session.getAttribute(PARTIALLY_AUTHENTICATED);
         }
 
         return false;
