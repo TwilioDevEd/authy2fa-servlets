@@ -14,14 +14,24 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/account"})
 public class AccountServlet extends HttpServlet {
 
-    private static final SessionManager sessionManager = new SessionManager();
-    private static final UserService service = new UserService();
+    private static SessionManager sessionManager;
+    private static UserService userService;
+
+    @SuppressWarnings("unused")
+    public AccountServlet() {
+        this(new SessionManager(), new UserService());
+    }
+
+    public AccountServlet(SessionManager sessionManager, UserService userService) {
+        this.sessionManager = sessionManager;
+        this.userService = userService;
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = sessionManager.getLoggedUserId(request);
-        User user = service.find(userId);
+        long userId = this.sessionManager.getLoggedUserId(request);
+        User user = this.userService.find(userId);
 
         request.setAttribute("name", user.getName());
         request.setAttribute("email", user.getEmail());
