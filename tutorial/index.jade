@@ -1,5 +1,5 @@
 .step(data-title='How it Works',
-data-file='Authy2FA/Providers/AuthyOneTouchProvider.cs')
+  data-file='src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java')
   :markdown
     ## About this application
 
@@ -31,3 +31,26 @@ data-file='Authy2FA/Providers/AuthyOneTouchProvider.cs')
     **See Also:**
 
     * [What is a Servlet](http://docs.oracle.com/javaee/6/tutorial/doc/bnafe.html)
+
+.step(data-title='Configuring Authy',
+  data-file='src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java',
+  data-highlight="28")
+  :markdown
+    ## Configuring Authy
+
+    If you haven't already, now is the time to [sign up for
+    Authy](https://dashboard.authy.com/signup). Create your first application,
+    naming it whatever you wish. After you create your application, your
+    "production" API key will be visible on your
+    [dashboard](https://dashboard.authy.com):
+
+    ![Authy Dashboard](//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png)
+
+    Once we have an Authy API key, we set it as an environment variable.
+
+    ---
+
+    **See Also:**
+
+    * [Authy Java](//github.com/authy/authy-java/)
+    * [Querying Environment Variables](//docs.oracle.com/javase/tutorial/essential/environment/env.html)
