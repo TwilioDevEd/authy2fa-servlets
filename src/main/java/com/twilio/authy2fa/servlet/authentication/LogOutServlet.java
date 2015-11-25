@@ -10,7 +10,7 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/logout"})
 public class LogOutServlet extends HttpServlet {
 
-    private static SessionManager sessionManager;
+    private final SessionManager sessionManager;
 
     @SuppressWarnings("unused")
     public LogOutServlet() {
@@ -24,7 +24,7 @@ public class LogOutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        this.sessionManager.logOut(request);
+        sessionManager.logOut(request);
         response.sendRedirect("login.jsp");
     }
 }

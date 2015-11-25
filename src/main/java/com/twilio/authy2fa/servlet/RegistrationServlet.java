@@ -16,9 +16,9 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet{
 
-    private static SessionManager sessionManager;
-    private static UserService userService;
-    private static AuthyApiClient authyClient;
+    private final SessionManager sessionManager;
+    private final UserService userService;
+    private final AuthyApiClient authyClient;
 
     @SuppressWarnings("unused")
     public RegistrationServlet() {
@@ -52,12 +52,12 @@ public class RegistrationServlet extends HttpServlet{
 
         if (validateRequest(request, name, email, password, countryCode, phoneNumber)) {
 
-            User user = this.userService.create(new User(name, email, password, countryCode, phoneNumber));
+            User user = userService.create(new User(name, email, password, countryCode, phoneNumber));
 
-            com.authy.api.User authyUser = this.authyClient.getUsers().createUser(user.getEmail(), user.getPhoneNumber(), user.getCountryCode());
+            com.authy.api.User authyUser = authyClient.getUsers().createUser(user.getEmail(), user.getPhoneNumber(), user.getCountryCode());
             if (authyUser.isOk()) {
                 user.setAuthyId(Integer.toString(authyUser.getId()));
-                this.userService.update(user);
+                userService.update(user);
             }
 
             sessionManager.logIn(request, user.getId());

@@ -15,7 +15,7 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/authy/callback"})
 public class CallbackServlet extends HttpServlet {
 
-    private static UserService userService;
+    private final UserService userService;
 
     @SuppressWarnings("unused")
     public CallbackServlet() {
@@ -35,12 +35,10 @@ public class CallbackServlet extends HttpServlet {
         if (validationResult.isValid()) {
 
             // Handle approved, denied, unauthorized
-            User user = this.userService.findByAuthyId(validationResult.getAuthyId());
-            System.out.println(user);
-
+            User user = userService.findByAuthyId(validationResult.getAuthyId());
             user.setAuthyStatus(validationResult.getStatus());
 
-            this.userService.update(user);
+            userService.update(user);
         }
     }
 }

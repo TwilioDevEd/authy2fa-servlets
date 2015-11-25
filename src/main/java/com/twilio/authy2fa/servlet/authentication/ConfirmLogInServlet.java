@@ -14,8 +14,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/confirm-login"})
 public class ConfirmLogInServlet extends HttpServlet {
 
-    private static SessionManager sessionManager;
-    private static UserService userService;
+    private final SessionManager sessionManager;
+    private final UserService userService;
 
     @SuppressWarnings("unused")
     public ConfirmLogInServlet() {
@@ -30,27 +30,27 @@ public class ConfirmLogInServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = this.sessionManager.getLoggedUserId(request);
-        User user = this.userService.find(userId);
+        long userId = sessionManager.getLoggedUserId(request);
+        User user = userService.find(userId);
 
         String authyStatus = user.getAuthyStatus();
 
         // Reset the Authy status
         user.setAuthyStatus("");
-        this.userService.update(user);
+        userService.update(user);
 
         switch (authyStatus) {
             case "approved":
-                this.sessionManager.logIn(request, user.getId());
+                sessionManager.logIn(request, user.getId());
                 response.sendRedirect("/account");
                 break;
             case "denied":
-                this.sessionManager.logOut(request);
+                sessionManager.logOut(request);
                 request.setAttribute("data", "You have declined the request");
                 request.getRequestDispatcher("/login.jsp").forward(request, response);
                 break;
             default:
-                this.sessionManager.logOut(request);
+                sessionManager.logOut(request);
                 request.setAttribute("data", "Unauthorized access");
                 request.getRequestDispatcher("/login.jsp").forward(request, response);
                 break;

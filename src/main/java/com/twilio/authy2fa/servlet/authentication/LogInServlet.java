@@ -16,9 +16,9 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/login"})
 public class LogInServlet extends HttpServlet {
 
-    private static SessionManager sessionManager;
-    private static UserService userService;
-    private static Client client;
+    private final SessionManager sessionManager;
+    private final UserService userService;
+    private final Client client;
 
     @SuppressWarnings("unused")
     public LogInServlet() {

@@ -14,8 +14,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/account"})
 public class AccountServlet extends HttpServlet {
 
-    private static SessionManager sessionManager;
-    private static UserService userService;
+    private final SessionManager sessionManager;
+    private final UserService userService;
 
     @SuppressWarnings("unused")
     public AccountServlet() {
@@ -30,8 +30,8 @@ public class AccountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = this.sessionManager.getLoggedUserId(request);
-        User user = this.userService.find(userId);
+        long userId = sessionManager.getLoggedUserId(request);
+        User user = userService.find(userId);
 
         request.setAttribute("name", user.getName());
         request.setAttribute("email", user.getEmail());

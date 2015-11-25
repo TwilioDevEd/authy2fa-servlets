@@ -1,5 +1,6 @@
 package com.authy.lib;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -81,19 +82,17 @@ public class JSONEncoder {
 
         if (ancestors.size() == 0) {
             return key;
-        } else {
-
-            List<String> path = new ArrayList<>();
-            path.addAll(ancestors);
-            path.add(key);
-
-            String head = path.remove(0);
-            String tail = String.join("", path.stream()
-                    .map(element -> String.format("[%s]", element))
-                    .collect(Collectors.toList()));
-
-            return String.format("%s%s", head, tail);
         }
+
+        List<String> path = new ArrayList<>(ancestors);
+        path.add(key);
+
+        String head = path.remove(0);
+        String tail = String.join("", path.stream()
+                .map(element -> String.format("[%s]", element))
+                .collect(Collectors.toList()));
+
+        return String.format("%s%s", head, tail);
     }
 
     private static JSONObject tryParseJSONObject(JSONObject object, String key) {
@@ -102,7 +101,7 @@ public class JSONEncoder {
 
         try {
             result = object.getJSONObject(key);
-        } catch (Exception ex) {
+        } catch (JSONException ex) {
             result = null;
         }
 

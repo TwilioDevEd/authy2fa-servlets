@@ -14,8 +14,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/authy/status"})
 public class OneTouchStatusServlet extends HttpServlet {
 
-    private static SessionManager sessionManager;
-    private static UserService userService;
+    private final SessionManager sessionManager;
+    private final UserService userService;
 
     @SuppressWarnings("unused")
     public OneTouchStatusServlet() {
@@ -30,8 +30,8 @@ public class OneTouchStatusServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = this.sessionManager.getLoggedUserId(request);
-        User user = this.userService.find(userId);
+        long userId = sessionManager.getLoggedUserId(request);
+        User user = userService.find(userId);
 
         response.getOutputStream().write(user.getAuthyStatus().getBytes());
     }
