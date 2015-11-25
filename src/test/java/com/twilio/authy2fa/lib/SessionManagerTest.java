@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,7 +77,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void isAuthorized() {
+    public void isAuthenticatedReturnsTrueWhenTheAttributeAuthenticatedIsTrue() {
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute(SessionManager.AUTHENTICATED)).thenReturn(true);
 
@@ -87,7 +88,17 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void isPartiallyAuthorized() {
+    public void isAuthorizedReturnsFalseWhenTheAttributeAuthenticatedIsNotAvailable() {
+        when(request.getSession(false)).thenReturn(session);
+
+        SessionManager sessionManager = new SessionManager();
+        boolean result = sessionManager.isAuthenticated(request);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isPartiallyAuthenticatedReturnsTrueWhenTheAttributePartiallyAuthenticatedIsTrue() {
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute(SessionManager.PARTIALLY_AUTHENTICATED)).thenReturn(true);
 
@@ -95,5 +106,15 @@ public class SessionManagerTest {
         boolean result = sessionManager.isPartiallyAuthenticated(request);
 
         assertTrue(result);
+    }
+
+    @Test
+    public void isPartiallyAuthenticatedReturnsTrueWhenTheAttributePartiallyAuthenticatedIsNotAvailable() {
+        when(request.getSession(false)).thenReturn(session);
+
+        SessionManager sessionManager = new SessionManager();
+        boolean result = sessionManager.isPartiallyAuthenticated(request);
+
+        assertFalse(result);
     }
 }

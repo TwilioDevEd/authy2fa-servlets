@@ -1,5 +1,7 @@
 package com.twilio.authy2fa.lib;
 
+import org.apache.http.auth.AUTH;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -45,7 +47,8 @@ public class SessionManager {
     public boolean isAuthenticated(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            return (boolean) session.getAttribute(AUTHENTICATED);
+            Object authenticated = session.getAttribute(AUTHENTICATED);
+            return authenticated != null && (boolean) authenticated;
         }
 
         return false;
@@ -54,7 +57,8 @@ public class SessionManager {
     public boolean isPartiallyAuthenticated(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            return (boolean) session.getAttribute(PARTIALLY_AUTHENTICATED);
+            Object partiallyAuthenticated = session.getAttribute(PARTIALLY_AUTHENTICATED);
+            return partiallyAuthenticated != null && (boolean) partiallyAuthenticated;
         }
 
         return false;
