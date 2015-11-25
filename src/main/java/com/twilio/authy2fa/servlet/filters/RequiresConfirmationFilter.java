@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
-@WebFilter(urlPatterns = {"/authy/callback", "/authy/status"})
+@WebFilter(urlPatterns = {"/authy/status"})
 public class RequiresConfirmationFilter implements Filter {
 
     @Override
@@ -22,9 +22,7 @@ public class RequiresConfirmationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        String uri = request.getRequestURI();
-
-        if (isAuthorized(request, uri)) {
+        if (isAuthorized(request)) {
             chain.doFilter(servletRequest, servletResponse);
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access");
@@ -35,7 +33,7 @@ public class RequiresConfirmationFilter implements Filter {
     public void destroy() {
     }
 
-    private boolean isAuthorized(HttpServletRequest request, String uri) {
+    private boolean isAuthorized(HttpServletRequest request) {
         return new SessionManager().isPartiallyAuthenticated(request);
     }
 }

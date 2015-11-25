@@ -15,10 +15,9 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/login"})
 public class LogInServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
 
-    private static final SessionManager sessionManager = new SessionManager();
-    private static final UserService service = new UserService();
+    private static final SessionManager SESSION_MANAGER = new SessionManager();
+    private static final UserService USER_SERVICE = new UserService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,12 +30,11 @@ public class LogInServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        User user = service.findByEmail(email);
+        User user = USER_SERVICE.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
-            sessionManager.logIn(request, user.getId());
+            SESSION_MANAGER.partialLogIn(request, user.getId());
             sendApprovalRequest(user);
-
-            response.sendRedirect("/welcome");
+            response.getOutputStream().write("onetouch".getBytes());
         } else {
             request.setAttribute("data", "Your credentials are incorrect");
             request.getRequestDispatcher("/login.jsp").forward(request, response);

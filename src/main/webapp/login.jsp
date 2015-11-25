@@ -8,6 +8,23 @@
     <link href="css/site.css" rel="stylesheet" >
 </head>
 <body>
+    <!-- Authy Modal -->
+    <div class="modal fade" id="authy-modal">
+      <div class='modal-dialog'>
+        <div class="modal-content">
+          <div class='modal-header'>
+            <h4 class='modal-title'>Please Authenticate</h4>
+          </div>
+          <div class='modal-body auth-onetouch'>
+            <div class='help-block'>
+              <i class="fa fa-spinner fa-pulse"></i> Waiting for OneTouch Approval ...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Authy Modal -->
+
     <section id="main" class="container">
         <!-- Nav Bar -->
         <nav class="navbar navbar-default">
@@ -25,7 +42,7 @@
             You never write. You never call. But we're glad you came, regardless! Be a pal and confirm your username and password, would you?
         </p>
 
-        <form action="login" method="post">
+        <form id="login-form">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" class="form-control" name="email" id="email" placeholder="you@yourdomain.com">
@@ -36,10 +53,17 @@
             </div>
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
+
+        <form action="confirm-login" method="post" id="confirm-login">
+        </form>
     </section>
     <footer class="container">
         Made with <i class="fa fa-heart"></i> by your pals
         <a href="http://www.twilio.com">@twilio</a>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="javascript/application.js"></script>
 </body>
 </html>

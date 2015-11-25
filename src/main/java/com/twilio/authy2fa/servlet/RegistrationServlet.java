@@ -36,13 +36,13 @@ public class RegistrationServlet extends HttpServlet{
 
         if (validateRequest(request, name, email, password, countryCode, phoneNumber)) {
 
-            User user = service.save(new User(name, email, password, countryCode, phoneNumber));
+            User user = service.create(new User(name, email, password, countryCode, phoneNumber));
 
             AuthyApiClient authyClient = new AuthyApiClient(System.getenv("AUTHY_API_KEY"));
             com.authy.api.User authyUser = authyClient.getUsers().createUser(user.getEmail(), user.getPhoneNumber(), user.getCountryCode());
             if (authyUser.isOk()) {
                 user.setAuthyId(Integer.toString(authyUser.getId()));
-                service.save(user);
+                service.update(user);
             }
 
             sessionManager.logIn(request, user.getId());

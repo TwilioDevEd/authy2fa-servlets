@@ -17,6 +17,7 @@ public class OneTouchStatusServlet extends HttpServlet {
     private static SessionManager sessionManager;
     private static UserService userService;
 
+    @SuppressWarnings("unused")
     public OneTouchStatusServlet() {
         this(new SessionManager(), new UserService());
     }

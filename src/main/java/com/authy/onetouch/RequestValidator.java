@@ -2,12 +2,12 @@ package com.authy.onetouch;
 
 import com.authy.lib.ContentReader;
 import com.authy.lib.JSONEncoder;
+import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +30,7 @@ public class RequestValidator {
         this.request = request;
     }
 
-    public String validate() throws IOException {
+    public RequestValidationResult validate() throws IOException {
 
         String requestContent = new ContentReader().read(this.request);
         JSONObject content = new JSONObject(requestContent);
@@ -46,11 +46,15 @@ public class RequestValidator {
             computedDigest = computeDigest(data, this.authyApiKey);
         } catch (Exception e) {
             e.printStackTrace();
-            return UNAUTHORIZED;
+            return new RequestValidationResult(UNAUTHORIZED);
         }
 
         String authySignature = this.request.getHeader("X-Authy-Signature");
-        return computedDigest.equals(authySignature) ? content.getString("status") : UNAUTHORIZED;
+
+        String authyId = content.get("authy_id").toString();
+        return computedDigest.equals(authySignature)
+                ? new RequestValidationResult(content.getString("status"), authyId)
+                : new RequestValidationResult(UNAUTHORIZED, authyId);
     }
 
     private String computeDigest(String message, String secret) throws NoSuchAlgorithmException, InvalidKeyException {

@@ -1,6 +1,7 @@
 package com.authy.lib.onetouch;
 
 import com.authy.onetouch.RequestValidator;
+import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,18 +31,20 @@ public class RequestValidatorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { "approved", "approved", "lbf3Tc/4EqrugZN3k1QlZc49TvH9aAI8Bb7ex1oE80I=" },
-                { "denied", "denied", "MNKi4IgPi6o/7alqZaF39Yk6+2eg/VnfkykpQO7raC0=" },
-                { "unauthorized", "approved", "Made-Up Authy Signature" }
+                { "approved", true, "approved", "lbf3Tc/4EqrugZN3k1QlZc49TvH9aAI8Bb7ex1oE80I=" },
+                { "denied", true, "denied", "MNKi4IgPi6o/7alqZaF39Yk6+2eg/VnfkykpQO7raC0=" },
+                { "unauthorized", false, "approved", "Made-Up Authy Signature" }
         });
     }
 
     private String expected;
+    private boolean expectedValidity;
     private String oneTouchStatus;
     private String authySignature;
 
-    public RequestValidatorTest(String expected, String oneTouchStatus, String authySignature) {
+    public RequestValidatorTest(String expected, boolean expectedValidity, String oneTouchStatus, String authySignature) {
         this.expected = expected;
+        this.expectedValidity = expectedValidity;
         this.oneTouchStatus = oneTouchStatus;
         this.authySignature = authySignature;
     }
@@ -93,8 +96,10 @@ public class RequestValidatorTest {
 
         RequestValidator validator = new RequestValidator("Authy-Api-Key", request);
 
-        String result = validator.validate();
+        RequestValidationResult result = validator.validate();
 
-        assertEquals(expected, result);
+        assertEquals(expected, result.getStatus());
+        assertEquals("8190000", result.getAuthyId());
+        assertEquals(expectedValidity, result.isValid());
     }
 }

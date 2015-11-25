@@ -1,7 +1,7 @@
 package com.twilio.authy2fa.servlet.authy;
 
 import com.authy.onetouch.RequestValidator;
-import com.twilio.authy2fa.lib.SessionManager;
+import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
 
@@ -15,17 +15,32 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/authy/callback"})
 public class CallbackServlet extends HttpServlet {
 
-    private static final SessionManager sessionManager = new SessionManager();
-    private static final UserService service = new UserService();
+    private static UserService userService;
+
+    @SuppressWarnings("unused")
+    public CallbackServlet() {
+        this(new UserService());
+    }
+
+    public CallbackServlet(UserService userService) {
+        this.userService = userService;
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        long userId = sessionManager.getLoggedUserId(request);
-        User user = service.find(userId);
-
         RequestValidator validator = new RequestValidator(System.getenv("AUTHY_API_KEY"), request);
-        user.setAuthyStatus(validator.validate());
-        service.save(user);
+        RequestValidationResult validationResult = validator.validate();
+
+        if (validationResult.isValid()) {
+
+            // Handle approved, denied, unauthorized
+            User user = this.userService.findByAuthyId(validationResult.getAuthyId());
+            System.out.println(user);
+
+            user.setAuthyStatus(validationResult.getStatus());
+
+            this.userService.update(user);
+        }
     }
 }
