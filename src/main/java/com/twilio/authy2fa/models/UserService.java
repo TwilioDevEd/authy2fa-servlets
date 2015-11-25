@@ -4,12 +4,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserService {
     private EntityManager entityManager;
 
     public UserService() {
-        this.entityManager = Persistence.createEntityManagerFactory("Authy2FA").createEntityManager();
+        Map<String, String> config = loadConfFromEnvironment();
+        this.entityManager = Persistence.createEntityManagerFactory("Authy2FA", config).createEntityManager();
     }
 
     public User find(long id) {
@@ -66,5 +69,21 @@ public class UserService {
 
     private EntityTransaction getTransaction() {
         return entityManager.getTransaction();
+    }
+
+    public Map<String, String> loadConfFromEnvironment() {
+        Map<String, String> env = System.getenv();
+        Map<String, String> config = new HashMap<>();
+        for (String key : env.keySet()) {
+            if (key.contains("DB_USER")) {
+                config.put("javax.persistence.jdbc.user", env.get(key));
+            }
+
+            if (key.contains("DB_PASSWORD")) {
+                config.put("javax.persistence.jdbc.password", env.get(key));
+            }
+        }
+
+        return config;
     }
 }
