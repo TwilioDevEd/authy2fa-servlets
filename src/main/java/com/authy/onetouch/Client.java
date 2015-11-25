@@ -5,7 +5,6 @@ import com.authy.lib.HttpClient;
 import com.authy.lib.Mapper;
 import com.authy.onetouch.approvalrequest.Parameters;
 import com.authy.onetouch.approvalrequest.Result;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
@@ -23,28 +22,26 @@ public class Client extends HttpClient {
     public static final String BASE_URL = "https://api.authy.com";
 
     private final String authyApiKey;
-    private final String userId;
 
     /**
      * One Touch Client initializer.
      *
      * @param authyApiKey   The Authy API key used to access the rest API
-     * @param userId        The user id used to send approval request
      */
-    public Client(String authyApiKey, String userId) {
+    public Client(String authyApiKey) {
 
         this.authyApiKey = authyApiKey;
-        this.userId = userId;
     }
 
     /**
      * Send an approval request to Authy.
      *
      * @param message   The message to be displayed in the device
+     * @param userId        The user id used to send approval request
      *
      * @throws IOException
      */
-    public Result sendApprovalRequest(String message, Parameters parameters) throws IOException {
+    public Result sendApprovalRequest(String userId, String message, Parameters parameters) throws IOException {
 
         String url = String.format("%s/onetouch/json/users/%s/approval_requests?api_key=%s&message=%s",
                 BASE_URL, userId, authyApiKey, URLEncoder.encode(message, "UTF-8"));

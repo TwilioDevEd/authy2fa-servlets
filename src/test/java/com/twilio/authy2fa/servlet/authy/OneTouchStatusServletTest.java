@@ -44,7 +44,6 @@ public class OneTouchStatusServletTest {
         when(userService.find(userId)).thenReturn(user);
 
         OneTouchStatusServlet servlet = new OneTouchStatusServlet(sessionManager, userService);
-
         MockServletOutputStream mockServletOutputStream = new MockServletOutputStream();
 
         when(response.getOutputStream()).thenReturn(mockServletOutputStream);

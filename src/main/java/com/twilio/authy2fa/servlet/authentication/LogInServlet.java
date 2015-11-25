@@ -16,8 +16,24 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/login"})
 public class LogInServlet extends HttpServlet {
 
-    private static final SessionManager SESSION_MANAGER = new SessionManager();
-    private static final UserService USER_SERVICE = new UserService();
+    private static SessionManager sessionManager;
+    private static UserService userService;
+    private static Client client;
+
+    @SuppressWarnings("unused")
+    public LogInServlet() {
+        this(
+                new SessionManager(),
+                new UserService(),
+                new Client(System.getenv("AUTHY_API_KEY"))
+        );
+    }
+
+    public LogInServlet(SessionManager sessionManager, UserService userService, Client client) {
+        this.sessionManager = sessionManager;
+        this.userService = userService;
+        this.client = client;
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,9 +46,9 @@ public class LogInServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        User user = USER_SERVICE.findByEmail(email);
+        User user = userService.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
-            SESSION_MANAGER.partialLogIn(request, user.getId());
+            sessionManager.partialLogIn(request, user.getId());
             sendApprovalRequest(user);
             response.getOutputStream().write("onetouch".getBytes());
         } else {
@@ -42,11 +58,10 @@ public class LogInServlet extends HttpServlet {
     }
 
     private void sendApprovalRequest(User user) throws IOException {
-        Client client = new Client(System.getenv("AUTHY_API_KEY"), user.getAuthyId());
         Parameters parameters = Parameters.builder()
                 .addDetail("email", user.getEmail())
                 .build();
 
-        client.sendApprovalRequest("Request login to Twilio demo app", parameters);
+        client.sendApprovalRequest(user.getAuthyId(), "Request login to Twilio demo app", parameters);
     }
 }
