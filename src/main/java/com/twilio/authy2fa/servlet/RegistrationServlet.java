@@ -1,9 +1,9 @@
 package com.twilio.authy2fa.servlet;
 
 import com.authy.AuthyApiClient;
+import com.twilio.authy2fa.lib.RequestParametersValidator;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
-import com.twilio.authy2fa.lib.EmailValidator;
 import com.twilio.authy2fa.lib.SessionManager;
 
 import javax.servlet.ServletException;
@@ -50,11 +50,12 @@ public class RegistrationServlet extends HttpServlet{
         String countryCode = request.getParameter("countryCode");
         String phoneNumber = request.getParameter("phoneNumber");
 
-        if (validateRequest(request, name, email, password, countryCode, phoneNumber)) {
+        if (validateRequest(request)) {
 
             User user = userService.create(new User(name, email, password, countryCode, phoneNumber));
 
-            com.authy.api.User authyUser = authyClient.getUsers().createUser(user.getEmail(), user.getPhoneNumber(), user.getCountryCode());
+            com.authy.api.User authyUser = authyClient.getUsers().createUser(email, phoneNumber, countryCode);
+
             if (authyUser.isOk()) {
                 user.setAuthyId(Integer.toString(authyUser.getId()));
                 userService.update(user);
@@ -68,46 +69,11 @@ public class RegistrationServlet extends HttpServlet{
         }
     }
 
-    private boolean validateRequest(
-            HttpServletRequest request,
-            String name,
-            String email,
-            String password,
-            String countryCode,
-            String phoneNumber) {
+    private boolean validateRequest(HttpServletRequest request) {
+        RequestParametersValidator validator = new RequestParametersValidator(request);
 
-        boolean isValid = true;
-
-        if (name.isEmpty()) {
-            request.setAttribute("nameError", "Name can't be blank");
-            isValid = false;
-        }
-
-        boolean isValidEmail = new EmailValidator().validate(email);
-        if (email.isEmpty()) {
-            request.setAttribute("emailError", "Email can't be blank");
-            isValid = false;
-        } else if (!isValidEmail) {
-            request.setAttribute("emailInvalidError", "Email is invalid");
-            isValid = false;
-        }
-
-        if (password.isEmpty()) {
-            request.setAttribute("passwordError", "Password can't be blank");
-            isValid = false;
-        }
-
-        if (countryCode.isEmpty()) {
-            request.setAttribute("countryCodeError", "Country code can't be blank");
-            isValid = false;
-        }
-
-        if (phoneNumber.isEmpty()) {
-            request.setAttribute("phoneNumberError", "Phone number can't be blank");
-            isValid = false;
-        }
-
-        return isValid;
+        return validator.validatePresence("name", "email", "password", "countryCode", "phoneNumber")
+                && validator.validateEmail("email");
     }
 
     private void preserveStatusRequest(
