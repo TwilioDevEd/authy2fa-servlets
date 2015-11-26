@@ -8,16 +8,28 @@ $(document).ready(function() {
 
     var authyVerification = function (data) {
         $.post("/login", data, function (result) {
-            $("#authy-modal").modal({ backdrop: "static" }, "show");
-
-            if (result === "onetouch") {
-                $(".auth-onetouch").fadeIn();
-                monitorOneTouchStatus();
-            } else {
-                // This handle the case for OneCode and SoftToken.
-                requestAuthyToken();
-            }
+            resultActions[result]();
         });
+    };
+
+    var resultActions = {
+        onetouch: function() {
+            $("#authy-modal").modal({ backdrop: "static" }, "show");
+            $(".auth-token").hide();
+            $(".auth-onetouch").fadeIn();
+            monitorOneTouchStatus();
+        },
+
+        sms: function () {
+            $("#authy-modal").modal({ backdrop: "static" }, "show");
+            $(".auth-onetouch").hide();
+            $(".auth-token").fadeIn();
+            requestAuthyToken();
+        },
+
+        unauthorized: function () {
+            $("#error-message").text("Invalid credentials");
+        }
     };
 
     var monitorOneTouchStatus = function () {
@@ -32,7 +44,10 @@ $(document).ready(function() {
     }
 
     var requestAuthyToken = function () {
-        $.post("/authy/request-token");
+        $.post("/authy/request-token")
+            .done(function (data) {
+                $("#authy-token-label").text(data);
+            });
     }
 
     $("#logout").click(function() {

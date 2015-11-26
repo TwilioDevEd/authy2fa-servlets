@@ -1,7 +1,7 @@
 package com.twilio.authy2fa.servlet.authy;
 
 import com.authy.AuthyApiClient;
-import com.authy.api.Hash;
+import com.authy.api.Token;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
@@ -13,15 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/authy/request-token"})
-public class RequestTokenServlet extends HttpServlet {
+@WebServlet(urlPatterns = {"/authy/verify-code"})
+public class VerifyCodeServlet extends HttpServlet {
 
     private final SessionManager sessionManager;
     private final UserService userService;
     private final AuthyApiClient authyClient;
 
     @SuppressWarnings("unused")
-    public RequestTokenServlet() {
+    public VerifyCodeServlet() {
         this(
                 new SessionManager(),
                 new UserService(),
@@ -29,7 +29,7 @@ public class RequestTokenServlet extends HttpServlet {
         );
     }
 
-    public RequestTokenServlet(SessionManager sessionManager, UserService userService, AuthyApiClient authyClient) {
+    public VerifyCodeServlet(SessionManager sessionManager, UserService userService, AuthyApiClient authyClient) {
         this.sessionManager = sessionManager;
         this.userService = userService;
         this.authyClient = authyClient;
@@ -41,10 +41,16 @@ public class RequestTokenServlet extends HttpServlet {
         long userId = sessionManager.getLoggedUserId(request);
         User user = userService.find(userId);
 
-        Hash result = authyClient.getUsers().requestSms(Integer.parseInt(user.getAuthyId()));
-        String verificationStrategy =
-                result.getMessage().contains("Ignored") ? "Authy SoftToken" : "Authy OneCode";
+        String authyToken = request.getParameter("authy-token");
 
-        response.getOutputStream().write(verificationStrategy.getBytes());
+        Token token = authyClient.getTokens().verify(Integer.parseInt(user.getAuthyId()), authyToken);
+        if (token.isOk()) {
+            sessionManager.logIn(request, user.getId());
+            response.sendRedirect("/account");
+        } else {
+            sessionManager.logOut(request);
+            request.setAttribute("data", "Token was invalid");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+        }
     }
 }

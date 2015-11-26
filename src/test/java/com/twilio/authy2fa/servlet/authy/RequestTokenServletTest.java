@@ -54,8 +54,8 @@ public class RequestTokenServletTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { "Ignored: SMS is not needed for smartphones.", "soft-token" },
-                { "Ok", "one-code" }
+                { "Ignored: SMS is not needed for smartphones.", "Authy SoftToken" },
+                { "Ok", "Authy OneCode" }
         });
     }
 

@@ -117,16 +117,19 @@ public class LogInServletTest {
         user.setPassword(password);
         when(request.getParameter("password")).thenReturn("s3cre7");
         when(userService.findByEmail(anyString())).thenReturn(user);
-        when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+
+        MockServletOutputStream mockServletOutputStream = new MockServletOutputStream();
+        when(response.getOutputStream()).thenReturn(mockServletOutputStream);
 
         LogInServlet servlet = new LogInServlet(sessionManager, userService, oneTouchClient);
         servlet.doPost(request, response);
 
-        verify(request).getRequestDispatcher("/login.jsp");
         verify(sessionManager, never()).partialLogIn(request, user.getId());
         verify(oneTouchClient, never()).sendApprovalRequest(
                 anyString(),
                 anyString(),
                 any(Parameters.class));
+
+        assertEquals("unauthorized", mockServletOutputStream.toString());
     }
 }

@@ -56,8 +56,7 @@ public class LogInServlet extends HttpServlet {
             String verificationStrategy = result.isOk() ? "onetouch" : "sms";
             response.getOutputStream().write(verificationStrategy.getBytes());
         } else {
-            request.setAttribute("data", "Your credentials are incorrect");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            response.getOutputStream().write("unauthorized".getBytes());
         }
     }
 
