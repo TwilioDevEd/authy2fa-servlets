@@ -1,4 +1,4 @@
-# Two-Factor Authentication with Authy with Servlets
+# Two-Factor Authentication with Authy and Servlets
 
 [![Build
 Status](https://travis-ci.org/TwilioDevEd/authy2fa-servlets.svg?branch=master)](https://travis-ci.org/TwilioDevEd/authy2fa-servlets)
