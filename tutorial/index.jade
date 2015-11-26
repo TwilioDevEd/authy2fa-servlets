@@ -54,3 +54,27 @@
 
     * [Authy Java](//github.com/authy/authy-java/)
     * [Querying Environment Variables](//docs.oracle.com/javase/tutorial/essential/environment/env.html)
+
+.step(data-file='src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java',
+  data-highlight="56-62")
+  :markdown
+    ## Registering a User with Authy
+
+    When a new User signs up for our website, we call this controller, which
+    handles saving our new User to the database as well as registering the User
+    with Authy.
+
+    All Authy needs to get a user set up for your application is the email,
+    phone number and country code. In order to do two-factor authentication,
+    we need to make sure we ask for these things at the point of sign up.
+
+    Once we register the User with Authy we get an `authyUser` back. This is
+    very important since it's how we will verify the identity of our User with
+    Authy.
+
+    ---
+
+    **See Also:**
+
+    * [Enabling a User with Authy](//docs.authy.com/totp.html#enabling-two-factor-authentication-for-a-user)
+
