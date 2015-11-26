@@ -2,6 +2,7 @@ package com.twilio.authy2fa.servlet.authentication;
 
 import com.authy.onetouch.Client;
 import com.authy.onetouch.approvalrequest.Parameters;
+import com.authy.onetouch.approvalrequest.Result;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
@@ -44,6 +45,9 @@ public class LogInServletTest {
     @Mock
     private Client oneTouchClient;
 
+    @Mock
+    private Result result;
+
 
     @Before
     public void setUp() {
@@ -51,15 +55,21 @@ public class LogInServletTest {
     }
 
     @Test
-    public void sendsApprovalRequestWhenCredentialsAreValid() throws ServletException, IOException {
+    public void sendsApprovalRequestWhenCredentialsAreValidThenRespondsWithOneTouchIfResponseIsSuccessful()
+            throws ServletException, IOException {
         String password = "secret";
         User user = new User();
         user.setPassword(password);
         when(request.getParameter("password")).thenReturn(password);
         when(userService.findByEmail(anyString())).thenReturn(user);
 
+        when(result.isOk()).thenReturn(true);
+        when(oneTouchClient.sendApprovalRequest(anyString(), anyString(), any(Parameters.class)))
+                .thenReturn(result);
+
         MockServletOutputStream mockServletOutputStream = new MockServletOutputStream();
         when(response.getOutputStream()).thenReturn(mockServletOutputStream);
+
 
         LogInServlet servlet = new LogInServlet(sessionManager, userService, oneTouchClient);
         servlet.doPost(request, response);
@@ -70,6 +80,34 @@ public class LogInServletTest {
                 anyString(),
                 any(Parameters.class));
         assertEquals("onetouch", mockServletOutputStream.toString());
+    }
+
+    @Test
+    public void sendsApprovalRequestWhenCredentialsAreValidThenRespondsWithSMSIfResponseIsUnsuccessful()
+            throws ServletException, IOException {
+        String password = "secret";
+        User user = new User();
+        user.setPassword(password);
+        when(request.getParameter("password")).thenReturn(password);
+        when(userService.findByEmail(anyString())).thenReturn(user);
+
+        when(result.isOk()).thenReturn(false);
+        when(oneTouchClient.sendApprovalRequest(anyString(), anyString(), any(Parameters.class)))
+                .thenReturn(result);
+
+        MockServletOutputStream mockServletOutputStream = new MockServletOutputStream();
+        when(response.getOutputStream()).thenReturn(mockServletOutputStream);
+
+
+        LogInServlet servlet = new LogInServlet(sessionManager, userService, oneTouchClient);
+        servlet.doPost(request, response);
+
+        verify(sessionManager).partialLogIn(request, user.getId());
+        verify(oneTouchClient).sendApprovalRequest(
+                anyString(),
+                anyString(),
+                any(Parameters.class));
+        assertEquals("sms", mockServletOutputStream.toString());
     }
 
     @Test

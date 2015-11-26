@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
-@WebFilter(urlPatterns = {"/authy/status"})
+@WebFilter(urlPatterns = {"/authy/status", "/authy/request-token"})
 public class RequiresConfirmationFilter implements Filter {
 
     @Override

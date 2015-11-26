@@ -2,6 +2,7 @@ package com.twilio.authy2fa.servlet.authentication;
 
 import com.authy.onetouch.Client;
 import com.authy.onetouch.approvalrequest.Parameters;
+import com.authy.onetouch.approvalrequest.Result;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
@@ -48,20 +49,24 @@ public class LogInServlet extends HttpServlet {
 
         User user = userService.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
+
             sessionManager.partialLogIn(request, user.getId());
-            sendApprovalRequest(user);
-            response.getOutputStream().write("onetouch".getBytes());
+
+            Result result = sendApprovalRequest(user);
+            String verificationStrategy = result.isOk() ? "onetouch" : "sms";
+            response.getOutputStream().write(verificationStrategy.getBytes());
         } else {
             request.setAttribute("data", "Your credentials are incorrect");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 
-    private void sendApprovalRequest(User user) throws IOException {
+    private Result sendApprovalRequest(User user) throws IOException {
         Parameters parameters = Parameters.builder()
                 .addDetail("email", user.getEmail())
                 .build();
 
-        client.sendApprovalRequest(user.getAuthyId(), "Request login to Twilio demo app", parameters);
+        return client.sendApprovalRequest(
+                user.getAuthyId(), "Request login to Twilio demo app", parameters);
     }
 }

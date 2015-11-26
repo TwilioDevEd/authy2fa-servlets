@@ -3,10 +3,10 @@ $(document).ready(function() {
         event.preventDefault();
 
         var data = $(event.currentTarget).serialize();
-        oneTouchVerification(data);
+        authyVerification(data);
     });
 
-    var oneTouchVerification = function (data) {
+    var authyVerification = function (data) {
         $.post("/login", data, function (result) {
             $("#authy-modal").modal({ backdrop: "static" }, "show");
 
@@ -14,7 +14,8 @@ $(document).ready(function() {
                 $(".auth-onetouch").fadeIn();
                 monitorOneTouchStatus();
             } else {
-                // Handle SMS Authentication
+                // This handle the case for OneCode and SoftToken.
+                requestAuthyToken();
             }
         });
     };
@@ -28,6 +29,10 @@ $(document).ready(function() {
                     $("#confirm-login").submit();
                 }
             });
+    }
+
+    var requestAuthyToken = function () {
+        $.post("/authy/request-token");
     }
 
     $("#logout").click(function() {
