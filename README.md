@@ -1,7 +1,6 @@
 # Two-Factor Authentication with Authy and Servlets
 
-[![Build
-Status](https://travis-ci.org/TwilioDevEd/authy2fa-servlets.svg?branch=master)](https://travis-ci.org/TwilioDevEd/authy2fa-servlets)
+[![Build Status](https://travis-ci.org/TwilioDevEd/authy2fa-servlets.svg?branch=master)](https://travis-ci.org/TwilioDevEd/authy2fa-servlets)
 
 This example application demonstrates how to use [Authy](http://www.authy.com)
 as the two-factor authentication provider using Servlets.
@@ -45,7 +44,7 @@ as the two-factor authentication provider using Servlets.
    $ mvn compile jetty:run
    ```
 
-6. Check it out at [http://localhost:8080/home](http://localhost:8080/home)
+6. Check it out at [http://localhost:8080](http://localhost:8080)
 
 7. To let Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
    ```bash

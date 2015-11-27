@@ -6,6 +6,6 @@
         version="2.5">
     <display-name>Authy 2 Factor Authentication</display-name>
     <welcome-file-list>
-        <welcome-file>login.html</welcome-file>
+        <welcome-file>home.html</welcome-file>
     </welcome-file-list>
 </web-app>
