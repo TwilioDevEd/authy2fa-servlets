@@ -8,11 +8,10 @@
     To run this sample app yourself, [download the code and follow the
     instructions on GitHub](https://github.com/TwilioDevEd/authy2fa-servlets).
 
-    Adding 2FA to your web application increases the security of your user's
-    data. [Multi-factor
-    authentication](http://en.wikipedia.org/wiki/Multi-factor_authentication)
-    determines the identity of a user by validating once by logging into the
-    app, and second by validating their mobile device.
+    Adding two-factor authentication (2FA) to your web application increases the security of your user's
+    data. [Multi-factor authentication](http://en.wikipedia.org/wiki/Multi-factor_authentication) 
+    determines the identity of a user by validating once by logging into the app, 
+    and then a second time with their mobile device using [Authy](https://www.twilio.com/authy).
 
     For the second factor, we will validate that the user has their mobile phone by either:
 
@@ -31,6 +30,7 @@
     **See Also:**
 
     * [What is a Servlet](http://docs.oracle.com/javaee/6/tutorial/doc/bnafe.html)
+    * [Authy overview](https://www.twilio.com/authy)
 
 .step(data-title='Configuring Authy',
   data-file='src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java',
@@ -41,12 +41,20 @@
     If you haven't already, now is the time to [sign up for
     Authy](https://dashboard.authy.com/signup). Create your first application,
     naming it whatever you wish. After you create your application, your
-    "production" API key will be visible on your
+    production API key will be visible on your
     [dashboard](https://dashboard.authy.com):
 
     ![Authy Dashboard](//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png)
 
-    Once we have an Authy API key, we set it as an environment variable.
+    Once we have an Authy API key, we store it in this `.env` file, which helps
+    us set the environment variables for our app.
+
+    You'll also want to set a callback URL for your application in the OneTouch
+    section of the Authy dashboard. See the project
+    [README](https://github.com/TwilioDevEd/authy2fa-servlets) for more details.
+
+    Now that we've configured our Java app, let's take a look at how we 
+    register a user with Authy.
 
     ---
 
@@ -68,7 +76,7 @@
     _phone number_ and _country code_. In order to do two-factor authentication,
     we need to make sure we ask for these things at the point of sign up.
 
-    Once we register the User with Authy we get an _Auhty_ `User` back. This is
+    Once we register the user with Authy we can get the user's Authy id back. This is
     very important since it's how we will verify the identity of our User with
     Authy.
 
@@ -77,6 +85,7 @@
     **See Also:**
 
     * [Enabling a User with Authy](//docs.authy.com/totp.html#enabling-two-factor-authentication-for-a-user)
+    * [JDBC Basics docs](//docs.oracle.com/javase/tutorial/jdbc/basics/index.html)
 
 .step(data-file='src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java',
   data-highlight='55, 63-70')
@@ -92,12 +101,12 @@
 
     * We attempt to send a _OneTouch Approval Request_ for the _user_.
     * If the _user_ has OneTouch enabled, we will get a _success_ message back.
-    * The _user_ hits 'approve' in their Authy app.
+    * The _user_ hits 'Approve' in their Authy app.
     * Authy makes a POST request to our app with an **approved** status.
     * We log the _user_ in.
 
     In the next steps we'll look at how we handle cases where the **user** does
-    not have OneTouch, or denies the login request.
+    not have OneTouch or denies the login request.
 
 .step(data-file='src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java',
   data-highlight='63-70')
@@ -133,10 +142,11 @@
   :markdown
     ## Configuring the OneTouch callback
 
-    In order for our app to know what the _user_ did after we sent the OneTouch
-    request, we need to register a callback endpoint with Authy.
+    In order for our app to know what the _user_ did after we sent the
+    OneTouch request, we need to register a callback endpoint with Authy.
 
-    ![Authy OneTouch Callback](//howtodocs.s3.amazonaws.com/onetouch-callback-endpoint.png)
+    ![Authy OneTouch Callback](//howtodocs.s3.amazonaws.com/onetouch-callback-
+    endpoint.png)
 
     **Note:** In order to verify that the request is coming from Authy, we've
     written the helper method `validate` that will halt the request if it
@@ -157,7 +167,7 @@
     ## Handle Two-Factor in the Browser
 
     We've already taken a look at what's happening on the server side, so let's
-    step in front of the cameras now and see how our JavaScript is interacting
+    step in front of the cameras and see how our JavaScript is interacting
     with those server endpoints.
 
     When we expect a OneTouch response, we will begin polling `/authy/status`
@@ -177,7 +187,7 @@
     ## Check Login Status
 
     Here is the endpoint that our JavaScript is polling. It is waiting for the
-    user authy status. Quite straightforward, right?
+    user authy status.
 
 .step(data-file='src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java',
   data-highlight='30-58')

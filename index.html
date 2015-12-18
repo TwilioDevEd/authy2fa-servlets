@@ -14,11 +14,10 @@
 sample application demonstrates two-factor authentication (2FA) using Authy.
 To run this sample app yourself, <a href="https://github.com/TwilioDevEd/authy2fa-servlets">download the code and follow the
 instructions on GitHub</a>.</p>
-<p>Adding 2FA to your web application increases the security of your user&#39;s
-data. <a href="http://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor
-authentication</a>
-determines the identity of a user by validating once by logging into the
-app, and second by validating their mobile device.</p>
+<p>Adding two-factor authentication (2FA) to your web application increases the security of your user&#39;s
+data. <a href="http://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a> 
+determines the identity of a user by validating once by logging into the app, 
+and then a second time with their mobile device using <a href="https://www.twilio.com/authy">Authy</a>.</p>
 <p>For the second factor, we will validate that the user has their mobile phone by either:</p>
 <ul>
 <li>Sending them a OneTouch push notification to their mobile Authy app or</li>
@@ -33,15 +32,22 @@ the tutorial.</p>
 <p><strong>See Also:</strong></p>
 <ul>
 <li><a href="http://docs.oracle.com/javaee/6/tutorial/doc/bnafe.html">What is a Servlet</a></li>
+<li><a href="https://www.twilio.com/authy">Authy overview</a></li>
 </ul>
 </div><div data-title="Configuring Authy" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" data-highlight="28" class="step"><h2 id="configuring-authy">Configuring Authy</h2>
 <p>If you haven&#39;t already, now is the time to <a href="https://dashboard.authy.com/signup">sign up for
 Authy</a>. Create your first application,
 naming it whatever you wish. After you create your application, your
-&quot;production&quot; API key will be visible on your
+production API key will be visible on your
 <a href="https://dashboard.authy.com">dashboard</a>:</p>
 <p><img src="//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png" alt="Authy Dashboard"></p>
-<p>Once we have an Authy API key, we set it as an environment variable.</p>
+<p>Once we have an Authy API key, we store it in this <code>.env</code> file, which helps
+us set the environment variables for our app.</p>
+<p>You&#39;ll also want to set a callback URL for your application in the OneTouch
+section of the Authy dashboard. See the project
+<a href="https://github.com/TwilioDevEd/authy2fa-servlets">README</a> for more details.</p>
+<p>Now that we&#39;ve configured our Java app, let&#39;s take a look at how we 
+register a user with Authy.</p>
 <hr>
 <p><strong>See Also:</strong></p>
 <ul>
@@ -55,13 +61,14 @@ handles saving our new <em>user</em> to the database as well as registering the
 <p>All Authy needs to get a user set up for your application is the <em>email</em>,
 <em>phone number</em> and <em>country code</em>. In order to do two-factor authentication,
 we need to make sure we ask for these things at the point of sign up.</p>
-<p>Once we register the User with Authy we get an <em>Auhty</em> <code>User</code> back. This is
+<p>Once we register the user with Authy we can get the user&#39;s Authy id back. This is
 very important since it&#39;s how we will verify the identity of our User with
 Authy.</p>
 <hr>
 <p><strong>See Also:</strong></p>
 <ul>
 <li><a href="//docs.authy.com/totp.html#enabling-two-factor-authentication-for-a-user">Enabling a User with Authy</a></li>
+<li><a href="//docs.oracle.com/javase/tutorial/jdbc/basics/index.html">JDBC Basics docs</a></li>
 </ul>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-highlight="55, 63-70" class="step"><h2 id="logging-in-with-authy-onetouch">Logging in with Authy OneTouch</h2>
 <p>When a User attempts to log in to our website, we will ask them for a second
@@ -71,12 +78,12 @@ form of identification. Let&#39;s take a look at OneTouch verification first.</p
 <ul>
 <li>We attempt to send a <em>OneTouch Approval Request</em> for the <em>user</em>.</li>
 <li>If the <em>user</em> has OneTouch enabled, we will get a <em>success</em> message back.</li>
-<li>The <em>user</em> hits &#39;approve&#39; in their Authy app.</li>
+<li>The <em>user</em> hits &#39;Approve&#39; in their Authy app.</li>
 <li>Authy makes a POST request to our app with an <strong>approved</strong> status.</li>
 <li>We log the <em>user</em> in.</li>
 </ul>
 <p>In the next steps we&#39;ll look at how we handle cases where the <strong>user</strong> does
-not have OneTouch, or denies the login request.</p>
+not have OneTouch or denies the login request.</p>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-highlight="63-70" class="step"><h2 id="sending-the-onetouch-request">Sending the OneTouch Request</h2>
 <p>When our <em>user</em> logs in, we let the user decide which two-factor
 authentication provider will be used. It can be <em>Authy OneTouch</em>, <em>Authy
