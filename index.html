@@ -106,9 +106,10 @@ device.</p>
   .<span class="cm-property">build</span>();
 </code></pre>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authy/CallbackServlet.java" data-highlight="29-43" class="step"><h2 id="configuring-the-onetouch-callback">Configuring the OneTouch callback</h2>
-<p>In order for our app to know what the <em>user</em> did after we sent the OneTouch
-request, we need to register a callback endpoint with Authy.</p>
-<p><img src="//howtodocs.s3.amazonaws.com/onetouch-callback-endpoint.png" alt="Authy OneTouch Callback"></p>
+<p>In order for our app to know what the <em>user</em> did after we sent the
+OneTouch request, we need to register a callback endpoint with Authy.</p>
+<p><img src="//howtodocs.s3.amazonaws.com/onetouch-callback-
+endpoint.png" alt="Authy OneTouch Callback"></p>
 <p><strong>Note:</strong> In order to verify that the request is coming from Authy, we&#39;ve
 written the helper method <code>validate</code> that will halt the request if it
 appears it isn&#39;t coming from Authy.</p>
@@ -121,7 +122,7 @@ check for <code>user.AuthyStatus == &quot;approved&quot;</code> before logging h
 <p>Let&#39;s take a look at the client-side code that will be handling this.</p>
 </div><div data-file="src/main/webapp/javascript/application.js" data-highlight="35-44" class="step"><h2 id="handle-two-factor-in-the-browser">Handle Two-Factor in the Browser</h2>
 <p>We&#39;ve already taken a look at what&#39;s happening on the server side, so let&#39;s
-step in front of the cameras now and see how our JavaScript is interacting
+step in front of the cameras and see how our JavaScript is interacting
 with those server endpoints.</p>
 <p>When we expect a OneTouch response, we will begin polling <code>/authy/status</code>
 until we see Authy status is not empty. Let&#39;s take a look at this controller
@@ -134,7 +135,7 @@ and see what is happening.</p>
 </ul>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authy/OneTouchStatusServlet.java" data-highlight="30-37" class="step"><h2 id="check-login-status">Check Login Status</h2>
 <p>Here is the endpoint that our JavaScript is polling. It is waiting for the
-user authy status. Quite straightforward, right?</p>
+user authy status.</p>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java" data-highlight="30-58" class="step"><h2 id="finish-the-2fa-step">Finish the 2FA Step</h2>
 <p>If the <code>AuthyStatus</code> is <strong>approved</strong>, then the user will be redirected to the
 account page, otherwise we&#39;ll show the login form with a message that indicates

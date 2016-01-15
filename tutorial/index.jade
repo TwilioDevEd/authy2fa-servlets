@@ -115,12 +115,12 @@
 
     When our _user_ logs in, we let the user decide which two-factor
     authentication provider will be used. It can be _Authy OneTouch_, _Authy
-    SoftToken_, _Authy OneCode_.
+    SoftToken_ and finally an SMS token.
 
     Authy OneTouch will be used when the user has a registered OneTouch
     device.
 
-    We create a wrapper for the OneTouch REST API, and we exposed the method
+    We create a wrapper for the OneTouch REST API, and we expose the method
     `sendApprovalRequest` to create an approval request wich takes 3 parameters:
 
     * The Authy _user ID_.
