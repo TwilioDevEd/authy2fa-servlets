@@ -7,7 +7,7 @@ as the two-factor authentication provider using Servlets.
 
 ## Local Development
 
-1. First clone this repository and `cd` into its directory:
+1. First clone this repository:
    ```bash
    $ git clone git@github.com:TwilioDevEd/authy2fa-servlets.git
    $ cd authy2fa-servlets
@@ -46,7 +46,7 @@ as the two-factor authentication provider using Servlets.
 
 6. Check it out at [http://localhost:8080](http://localhost:8080)
 
-7. To let Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
+7. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
    ```bash
    $ ngrok http 8080
    ```
