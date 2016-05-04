@@ -1,4 +1,4 @@
-.step(data-title='How it Works',
+.step(data-title='About this application',
   data-file='src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java')
   :markdown
     ## About this application
@@ -9,9 +9,9 @@
     instructions on GitHub](https://github.com/TwilioDevEd/authy2fa-servlets).
 
     Adding two-factor authentication (2FA) to your web application increases the security of your user's
-    data. [Multi-factor authentication](http://en.wikipedia.org/wiki/Multi-factor_authentication) 
-    determines the identity of a user by validating once by logging into the app, 
-    and then a second time with their mobile device using [Authy](https://www.twilio.com/authy).
+    data. [Multi-factor authentication](http://en.wikipedia.org/wiki/Multi-factor_authentication)
+    determines the identity of a user by validating first by logging into the app,
+    and then through their mobile devices using [Authy](https://www.twilio.com/authy).
 
     For the second factor, we will validate that the user has their mobile phone by either:
 
@@ -40,20 +40,20 @@
 
     If you haven't already, now is the time to [sign up for
     Authy](https://dashboard.authy.com/signup). Create your first application,
-    naming it whatever you wish. After you create your application, your
+    naming it as you wish. After you create your application, your
     production API key will be visible on your
     [dashboard](https://dashboard.authy.com):
 
     ![Authy Dashboard](//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png)
 
-    Once we have an Authy API key, we store it in this `.env` file, which helps
+    Once we have an Authy API key, we store it on this `.env` file, which helps
     us set the environment variables for our app.
 
     You'll also want to set a callback URL for your application in the OneTouch
-    section of the Authy dashboard. See the project
+    section of the Authy dashboard. See the project's
     [README](https://github.com/TwilioDevEd/authy2fa-servlets) for more details.
 
-    Now that we've configured our Java app, let's take a look at how we 
+    Now that we've configured our Java app, let's take a look at how we
     register a user with Authy.
 
     ---
@@ -97,7 +97,7 @@
 
     ![Authy OneTouch Approval](//howtodocs.s3.amazonaws.com/onetouch-approved.gif)
 
-    OneTouch works like so:
+    OneTouch works as follows:
 
     * We attempt to send a _OneTouch Approval Request_ for the _user_.
     * If the _user_ has OneTouch enabled, we will get a _success_ message back.
@@ -115,13 +115,14 @@
 
     When our _user_ logs in, we let the user decide which two-factor
     authentication provider will be used. It can be _Authy OneTouch_, _Authy
-    SoftToken_ and finally an SMS token.
+    SoftToken_ or an SMS token.
 
     Authy OneTouch will be used when the user has a registered OneTouch
     device.
 
     We create a wrapper for the OneTouch REST API, and we expose the method
-    `sendApprovalRequest` to create an approval request wich takes 3 parameters:
+    `sendApprovalRequest` to create an approval request. It takes the
+    following 3 parameters:
 
     * The Authy _user ID_.
     * The _message_ that will be displayed in the device.
@@ -150,14 +151,14 @@
 
     **Note:** In order to verify that the request is coming from Authy, we've
     written the helper method `validate` that will halt the request if it
-    appears it isn't coming from Authy.
+    appears that it isn't coming from Authy.
 
     Here in our callback, we look up the _user_ using the _Authy ID_ sent with
     the Authy POST request. Ideally at this point we would probably use a
     websocket to let our client know that we received a response from Authy.
     However for this version we're going to keep it simple and just update the
-    `AuthyStatus` on the User. Then all our client-side code needs to do is
-    check for `user.AuthyStatus == "approved"` before logging her in.
+    `AuthyStatus` on the User. What our client-side code needs to do is
+    to check for `user.AuthyStatus == "approved"` before logging him/her in.
 
     Let's take a look at the client-side code that will be handling this.
 
@@ -186,7 +187,7 @@
   :markdown
     ## Check Login Status
 
-    Here is the endpoint that our JavaScript is polling. It is waiting for the
+    This is the endpoint that our JavaScript is polling. It is waiting for the
     user authy status.
 
 .step(data-file='src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java',
@@ -194,7 +195,7 @@
   :markdown
     ## Finish the 2FA Step
 
-    If the `AuthyStatus` is **approved**, then the user will be redirected to the
+    If the `AuthyStatus` is **approved**, the user will be redirected to the
     account page, otherwise we'll show the login form with a message that indicates
     the if the request was _denied_ or _unauthorized_.
 
