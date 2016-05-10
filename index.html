@@ -9,15 +9,15 @@
 .wrapper {
   height:100%;
   width:100%;
-}</style><link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico"><link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png"><link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png"><link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png"><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"><link rel="stylesheet" href="viewsaurus.css"></head><body><div class="wrapper"><div id="viewsaurus" data-title="Two-Factor Authentication with Authy"><div class="saurus-panes"><div class="saurus-prose"><div class="saurus-prose-header"><div class="title-outer"><span class="step-title">Two-Factor Authentication with Authy</span></div></div><div class="saurus-nav-buttons"><div class="saurus-nav-button nav-overview"><div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-previous"><div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-next clickable"><div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div></div><div class="saurus-next-title"><span class="next-title-inner"></span></div></div><div class="saurus-progress-bar"></div><div class="saurus-start"><p>Learn to implement two-factor authentication (2FA) in your web app with Twilio-powered Authy. 2FA helps further secure your users' data by validating more than just a password. This tutorial will show you the code to make it happen.</p><a href="#0">Start Tutorial</a></div><div class="saurus-content"><div data-title="How it Works" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" class="step"><h2 id="about-this-application">About this application</h2>
+}</style><link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico"><link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png"><link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png"><link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png"><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"><link rel="stylesheet" href="viewsaurus.css"></head><body><div class="wrapper"><div id="viewsaurus" data-title="Two-Factor Authentication with Authy"><div class="saurus-panes"><div class="saurus-prose"><div class="saurus-prose-header"><div class="title-outer"><span class="step-title">Two-Factor Authentication with Authy</span></div></div><div class="saurus-nav-buttons"><div class="saurus-nav-button nav-overview"><div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-previous"><div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-next clickable"><div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div></div><div class="saurus-next-title"><span class="next-title-inner"></span></div></div><div class="saurus-progress-bar"></div><div class="saurus-start"><p>Learn to implement two-factor authentication (2FA) in your web app with Twilio-powered Authy. 2FA helps further secure your users' data by validating more than just a password. This tutorial will show you the code to make it happen.</p><a href="#0">Start Tutorial</a></div><div class="saurus-content"><div data-title="About this application" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" class="step"><h2 id="about-this-application">About this application</h2>
 <p>This <a href="//docs.oracle.com/javaee/6/tutorial/doc/bnafd.html">Java Servlets</a>
 sample application demonstrates two-factor authentication (2FA) using Authy.
 To run this sample app yourself, <a href="https://github.com/TwilioDevEd/authy2fa-servlets">download the code and follow the
 instructions on GitHub</a>.</p>
 <p>Adding two-factor authentication (2FA) to your web application increases the security of your user&#39;s
-data. <a href="http://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a> 
-determines the identity of a user by validating once by logging into the app, 
-and then a second time with their mobile device using <a href="https://www.twilio.com/authy">Authy</a>.</p>
+data. <a href="http://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a>
+determines the identity of a user by validating first by logging into the app,
+and then through their mobile devices using <a href="https://www.twilio.com/authy">Authy</a>.</p>
 <p>For the second factor, we will validate that the user has their mobile phone by either:</p>
 <ul>
 <li>Sending them a OneTouch push notification to their mobile Authy app or</li>
@@ -37,16 +37,16 @@ the tutorial.</p>
 </div><div data-title="Configuring Authy" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" data-highlight="28" class="step"><h2 id="configuring-authy">Configuring Authy</h2>
 <p>If you haven&#39;t already, now is the time to <a href="https://dashboard.authy.com/signup">sign up for
 Authy</a>. Create your first application,
-naming it whatever you wish. After you create your application, your
+naming it as you wish. After you create your application, your
 production API key will be visible on your
 <a href="https://dashboard.authy.com">dashboard</a>:</p>
 <p><img src="//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png" alt="Authy Dashboard"></p>
-<p>Once we have an Authy API key, we store it in this <code>.env</code> file, which helps
+<p>Once we have an Authy API key, we store it on this <code>.env</code> file, which helps
 us set the environment variables for our app.</p>
 <p>You&#39;ll also want to set a callback URL for your application in the OneTouch
-section of the Authy dashboard. See the project
+section of the Authy dashboard. See the project&#39;s
 <a href="https://github.com/TwilioDevEd/authy2fa-servlets">README</a> for more details.</p>
-<p>Now that we&#39;ve configured our Java app, let&#39;s take a look at how we 
+<p>Now that we&#39;ve configured our Java app, let&#39;s take a look at how we
 register a user with Authy.</p>
 <hr>
 <p><strong>See Also:</strong></p>
@@ -74,7 +74,7 @@ Authy.</p>
 <p>When a User attempts to log in to our website, we will ask them for a second
 form of identification. Let&#39;s take a look at OneTouch verification first.</p>
 <p><img src="//howtodocs.s3.amazonaws.com/onetouch-approved.gif" alt="Authy OneTouch Approval"></p>
-<p>OneTouch works like so:</p>
+<p>OneTouch works as follows:</p>
 <ul>
 <li>We attempt to send a <em>OneTouch Approval Request</em> for the <em>user</em>.</li>
 <li>If the <em>user</em> has OneTouch enabled, we will get a <em>success</em> message back.</li>
@@ -87,11 +87,12 @@ not have OneTouch or denies the login request.</p>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-highlight="63-70" class="step"><h2 id="sending-the-onetouch-request">Sending the OneTouch Request</h2>
 <p>When our <em>user</em> logs in, we let the user decide which two-factor
 authentication provider will be used. It can be <em>Authy OneTouch</em>, <em>Authy
-SoftToken</em>, <em>Authy OneCode</em>.</p>
+SoftToken</em> or an SMS token.</p>
 <p>Authy OneTouch will be used when the user has a registered OneTouch
 device.</p>
-<p>We create a wrapper for the OneTouch REST API, and we exposed the method
-<code>sendApprovalRequest</code> to create an approval request wich takes 3 parameters:</p>
+<p>We create a wrapper for the OneTouch REST API, and we expose the method
+<code>sendApprovalRequest</code> to create an approval request. It takes the
+following 3 parameters:</p>
 <ul>
 <li>The Authy <em>user ID</em>.</li>
 <li>The <em>message</em> that will be displayed in the device.</li>
@@ -112,13 +113,13 @@ OneTouch request, we need to register a callback endpoint with Authy.</p>
 endpoint.png" alt="Authy OneTouch Callback"></p>
 <p><strong>Note:</strong> In order to verify that the request is coming from Authy, we&#39;ve
 written the helper method <code>validate</code> that will halt the request if it
-appears it isn&#39;t coming from Authy.</p>
+appears that it isn&#39;t coming from Authy.</p>
 <p>Here in our callback, we look up the <em>user</em> using the <em>Authy ID</em> sent with
 the Authy POST request. Ideally at this point we would probably use a
 websocket to let our client know that we received a response from Authy.
 However for this version we&#39;re going to keep it simple and just update the
-<code>AuthyStatus</code> on the User. Then all our client-side code needs to do is
-check for <code>user.AuthyStatus == &quot;approved&quot;</code> before logging her in.</p>
+<code>AuthyStatus</code> on the User. What our client-side code needs to do is
+to check for <code>user.AuthyStatus == &quot;approved&quot;</code> before logging him/her in.</p>
 <p>Let&#39;s take a look at the client-side code that will be handling this.</p>
 </div><div data-file="src/main/webapp/javascript/application.js" data-highlight="35-44" class="step"><h2 id="handle-two-factor-in-the-browser">Handle Two-Factor in the Browser</h2>
 <p>We&#39;ve already taken a look at what&#39;s happening on the server side, so let&#39;s
@@ -134,10 +135,10 @@ and see what is happening.</p>
 <li><a href="//api.jquery.com/submit/">jQuery submit()</a></li>
 </ul>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authy/OneTouchStatusServlet.java" data-highlight="30-37" class="step"><h2 id="check-login-status">Check Login Status</h2>
-<p>Here is the endpoint that our JavaScript is polling. It is waiting for the
+<p>This is the endpoint that our JavaScript is polling. It is waiting for the
 user authy status.</p>
 </div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java" data-highlight="30-58" class="step"><h2 id="finish-the-2fa-step">Finish the 2FA Step</h2>
-<p>If the <code>AuthyStatus</code> is <strong>approved</strong>, then the user will be redirected to the
+<p>If the <code>AuthyStatus</code> is <strong>approved</strong>, the user will be redirected to the
 account page, otherwise we&#39;ll show the login form with a message that indicates
 the if the request was <em>denied</em> or <em>unauthorized</em>.</p>
 </div><div class="step"><h2 id="where-to-next-">Where to next?</h2>
