@@ -2,18 +2,20 @@
 
 [![Build Status](https://travis-ci.org/TwilioDevEd/authy2fa-servlets.svg?branch=master)](https://travis-ci.org/TwilioDevEd/authy2fa-servlets)
 
-This example application demonstrates how to use [Authy](http://www.authy.com)
+This application example demonstrates how to use [Authy](http://www.authy.com)
 as the two-factor authentication provider using Servlets.
 
 ## Local Development
 
-1. First clone this repository and `cd` into its directory:
+1. First clone this repository and `cd`into it.
+
    ```bash
    $ git clone git@github.com:TwilioDevEd/authy2fa-servlets.git
    $ cd authy2fa-servlets
    ```
 
 2. Create the database.
+
    ```bash
    $ createdb authy2fa
    ```
@@ -25,7 +27,7 @@ as the two-factor authentication provider using Servlets.
 3. Edit the sample configuration file `.env.example` to match your configuration.
 
    Once you have edited the `.env.example` file, if you are using a UNIX operating system,
-   just use the `source` command to load the variables into your environment:
+   just use the `source` command to load the variables into your environment.
 
    ```bash
    $ source .env.example
@@ -35,6 +37,7 @@ as the two-factor authentication provider using Servlets.
    variables from the `.env.example` file are loaded into your environment._
 
 4. Execute the migrations.
+
    ```bash
    $ mvn compile flyway:migrate
    ```
@@ -46,7 +49,8 @@ as the two-factor authentication provider using Servlets.
 
 6. Check it out at [http://localhost:8080](http://localhost:8080)
 
-7. To let Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
+7. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
+
    ```bash
    $ ngrok http 8080
    ```
