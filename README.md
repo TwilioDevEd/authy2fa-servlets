@@ -54,7 +54,7 @@ as the two-factor authentication provider using Servlets.
    $ mvn compile jetty:run
    ```
 
-1. Check it out at [http://localhost:8080/home.html](http://localhost:8080/home.html)
+1. Check it out at [http://localhost:8080/](http://localhost:8080/)
 
 1. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
 
