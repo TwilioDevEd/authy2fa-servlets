@@ -9,6 +9,7 @@ public class Result {
 
     private String message;
     private Boolean success;
+    private String errorCode;
     private Map<String, String> errors;
     private Map<String, String> approvalRequest;
 
@@ -30,6 +31,11 @@ public class Result {
     @JsonProperty("approval_request")
     public Map<String, String> getApprovalRequest() {
         return approvalRequest;
+    }
+
+    @JsonProperty("error_code")
+    public String getErrorCode() {
+        return errorCode;
     }
 
     public boolean isOk() {
