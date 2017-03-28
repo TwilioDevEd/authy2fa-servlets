@@ -14,7 +14,7 @@ as the two-factor authentication provider using Servlets.
    $ cd authy2fa-servlets
    ```
 
-2. Create the database.
+1. Create the database.
 
    ```bash
    $ createdb authy2fa
@@ -24,33 +24,57 @@ as the two-factor authentication provider using Servlets.
    don't have it already, you should install it. The easiest way is by
    using [Postgres.app](http://postgresapp.com/)._
 
-3. Edit the sample configuration file `.env.example` to match your configuration.
+1. Copy the sample configuration file and edit it to match your configuration.
 
-   Once you have edited the `.env.example` file, if you are using a UNIX operating system,
-   just use the `source` command to load the variables into your environment.
+    ```bash
+    $ cp .env.example .env
+    ```
 
-   ```bash
-   $ source .env.example
-   ```
+   You'll need to set `JDBC_URL`, `DB_USERNAME`, and `DB_PASSWORD`.
 
-   _If you are using a different operating system, make sure that all the
-   variables from the `.env.example` file are loaded into your environment._
+   You can find your `AUTHY_API_KEY` in your
+   [Authy Dashboard](https://dashboard.authy.com).
 
-4. Execute the migrations.
+   Once you have populated all the values, load the variables with `source`.
+
+    ```bash
+    $ source .env
+    ```
+
+    _If you are using a different operating system, make sure that all the variables from the `.env` file are loaded into your environment._
+
+1. Execute the migrations.
 
    ```bash
    $ mvn compile flyway:migrate
    ```
 
-5. Run the application.
+1. Run the application.
    ```bash
    $ mvn compile jetty:run
    ```
 
-6. Check it out at [http://localhost:8080](http://localhost:8080)
+1. Check it out at [http://localhost:8080/home.html](http://localhost:8080/home.html)
 
-7. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
+1. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
 
    ```bash
    $ ngrok http 8080
    ```
+
+## Run the tests
+
+Assuming you have configured the application for your local test
+environment, you can then use Flyway to migrate the test database
+(by setting the correct `JDBC_URL`) and then use Maven
+to run the tests:
+
+```
+mvn test
+```
+
+## Meta
+
+* No warranty expressed or implied. Software is as is. Diggity.
+* [MIT License](http://www.opensource.org/licenses/mit-license.html)
+* Lovingly crafted by Twilio Developer Education.
