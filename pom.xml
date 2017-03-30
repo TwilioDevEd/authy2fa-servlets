@@ -9,11 +9,27 @@
     <version>1.0</version>
 
     <properties>
-        <jetty.version>9.3.3.v20150827</jetty.version>
+        <jetty.version>9.4.2.v20170220</jetty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <logback.version>1.2.2</logback.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.25</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>1.7.25</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -73,6 +89,28 @@
             <groupId>com.googlecode.flyway</groupId>
             <artifactId>flyway-maven-plugin</artifactId>
             <version>2.3.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-nop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-access</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -103,28 +141,21 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- This plugin is needed for this servlet example -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
                 <configuration>
-                    <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
+                    <webApp>
+                        <webInfIncludeJarPattern>.*/twilio[^/]*\.jar$</webInfIncludeJarPattern>
+                    </webApp>
+                    <jettyConfig>${project.build.directory}/classes/jetty-logback-access.xml</jettyConfig>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>com.twilio.authy2fa.App</mainClass>
-                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-access</artifactId>
+                        <version>${logback.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
