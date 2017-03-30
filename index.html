@@ -1,0 +1,167 @@
+<!DOCTYPE html><html><head><title>Two-Factor Authentication with Authy</title><style>body, html {
+  height:100%;
+  width:100%;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  background-color:#ddd;
+}
+.wrapper {
+  height:100%;
+  width:100%;
+}</style><link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico"><link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png"><link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png"><link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png"><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"><link rel="stylesheet" href="viewsaurus.css"></head><body><div class="wrapper"><div id="viewsaurus" data-title="Two-Factor Authentication with Authy"><div class="saurus-panes"><div class="saurus-prose"><div class="saurus-prose-header"><div class="title-outer"><span class="step-title">Two-Factor Authentication with Authy</span></div></div><div class="saurus-nav-buttons"><div class="saurus-nav-button nav-overview"><div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-previous"><div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-next clickable"><div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div></div><div class="saurus-next-title"><span class="next-title-inner"></span></div></div><div class="saurus-progress-bar"></div><div class="saurus-start"><p>Learn to implement two-factor authentication (2FA) in your web app with Twilio-powered Authy. 2FA helps further secure your users' data by validating more than just a password. This tutorial will show you the code to make it happen.</p><a href="#0">Start Tutorial</a></div><div class="saurus-content"><div data-title="How it Works" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" class="step"><h2 id="about-this-application">About this application</h2>
+<p>This <a href="//docs.oracle.com/javaee/6/tutorial/doc/bnafd.html">Java Servlets</a>
+sample application demonstrates two-factor authentication (2FA) using Authy.
+To run this sample app yourself, <a href="https://github.com/TwilioDevEd/authy2fa-servlets">download the code and follow the
+instructions on GitHub</a>.</p>
+<p>Adding two-factor authentication (2FA) to your web application increases the security of your user&#39;s
+data. <a href="http://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a> 
+determines the identity of a user by validating once by logging into the app, 
+and then a second time with their mobile device using <a href="https://www.twilio.com/authy">Authy</a>.</p>
+<p>For the second factor, we will validate that the user has their mobile phone by either:</p>
+<ul>
+<li>Sending them a OneTouch push notification to their mobile Authy app or</li>
+<li>Sending them a token through their mobile Authy app or</li>
+<li>Sending them a one-time token in a text message <a href="http://www.authy.com/">sent with Authy via
+Twilio</a>. Here&#39;s how this works at a high level:</li>
+</ul>
+<p><img src="//s3.amazonaws.com/howtodocs/2fa-high-level.png" alt="2FA High Level"></p>
+<p>Let&#39;s get started! Click the right arrow above to move to the next step of
+the tutorial.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="http://docs.oracle.com/javaee/6/tutorial/doc/bnafe.html">What is a Servlet</a></li>
+<li><a href="https://www.twilio.com/authy">Authy overview</a></li>
+</ul>
+</div><div data-title="Configuring Authy" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" data-highlight="28" class="step"><h2 id="configuring-authy">Configuring Authy</h2>
+<p>If you haven&#39;t already, now is the time to <a href="https://dashboard.authy.com/signup">sign up for
+Authy</a>. Create your first application,
+naming it whatever you wish. After you create your application, your
+production API key will be visible on your
+<a href="https://dashboard.authy.com">dashboard</a>:</p>
+<p><img src="//s3.amazonaws.com/howtodocs/2fa-authy-dashboard.png" alt="Authy Dashboard"></p>
+<p>Once we have an Authy API key, we store it in this <code>.env</code> file, which helps
+us set the environment variables for our app.</p>
+<p>You&#39;ll also want to set a callback URL for your application in the OneTouch
+section of the Authy dashboard. See the project
+<a href="https://github.com/TwilioDevEd/authy2fa-servlets">README</a> for more details.</p>
+<p>Now that we&#39;ve configured our Java app, let&#39;s take a look at how we 
+register a user with Authy.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//github.com/authy/authy-java/">Authy Java</a></li>
+<li><a href="//docs.oracle.com/javase/tutorial/essential/environment/env.html">Querying Environment Variables</a></li>
+</ul>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" data-highlight="55-62" class="step"><h2 id="registering-a-user-with-authy">Registering a User with Authy</h2>
+<p>When a new <strong>user</strong> signs up for our website, we call this controller, which
+handles saving our new <em>user</em> to the database as well as registering the
+<em>user</em> with <a href="//www.authy.com/">Authy</a>.</p>
+<p>All Authy needs to get a user set up for your application is the <em>email</em>,
+<em>phone number</em> and <em>country code</em>. In order to do two-factor authentication,
+we need to make sure we ask for these things at the point of sign up.</p>
+<p>Once we register the user with Authy we can get the user&#39;s Authy id back. This is
+very important since it&#39;s how we will verify the identity of our User with
+Authy.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//docs.authy.com/totp.html#enabling-two-factor-authentication-for-a-user">Enabling a User with Authy</a></li>
+<li><a href="//docs.oracle.com/javase/tutorial/jdbc/basics/index.html">JDBC Basics docs</a></li>
+</ul>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-highlight="55, 63-70" class="step"><h2 id="logging-in-with-authy-onetouch">Logging in with Authy OneTouch</h2>
+<p>When a User attempts to log in to our website, we will ask them for a second
+form of identification. Let&#39;s take a look at OneTouch verification first.</p>
+<p><img src="//howtodocs.s3.amazonaws.com/onetouch-approved.gif" alt="Authy OneTouch Approval"></p>
+<p>OneTouch works like so:</p>
+<ul>
+<li>We attempt to send a <em>OneTouch Approval Request</em> for the <em>user</em>.</li>
+<li>If the <em>user</em> has OneTouch enabled, we will get a <em>success</em> message back.</li>
+<li>The <em>user</em> hits &#39;Approve&#39; in their Authy app.</li>
+<li>Authy makes a POST request to our app with an <strong>approved</strong> status.</li>
+<li>We log the <em>user</em> in.</li>
+</ul>
+<p>In the next steps we&#39;ll look at how we handle cases where the <strong>user</strong> does
+not have OneTouch or denies the login request.</p>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-highlight="63-70" class="step"><h2 id="sending-the-onetouch-request">Sending the OneTouch Request</h2>
+<p>When our <em>user</em> logs in, we let the user decide which two-factor
+authentication provider will be used. It can be <em>Authy OneTouch</em>, <em>Authy
+SoftToken</em>, <em>Authy OneCode</em>.</p>
+<p>Authy OneTouch will be used when the user has a registered OneTouch
+device.</p>
+<p>We create a wrapper for the OneTouch REST API, and we exposed the method
+<code>sendApprovalRequest</code> to create an approval request wich takes 3 parameters:</p>
+<ul>
+<li>The Authy <em>user ID</em>.</li>
+<li>The <em>message</em> that will be displayed in the device.</li>
+<li>A <em>parameters</em> object that contains the details specified on
+<a href="//docs.authy.com/onetouch.html#create-approvalrequest">Create ApprovalRequest</a>.</li>
+</ul>
+<p>Here is an example about how to build the <em>parameters</em> object.</p>
+<pre><code class="cm-s-monokai lang-javascript"><span class="cm-variable">Parameters</span> <span class="cm-variable">parameters</span> <span class="cm-operator">=</span> <span class="cm-variable">Parameters</span>.<span class="cm-property">builder</span>()
+  .<span class="cm-property">addDetail</span>(<span class="cm-string">&quot;email&quot;</span>, <span class="cm-string">&quot;alice@example.com&quot;</span>)
+  .<span class="cm-property">addDetail</span>(<span class="cm-string">&quot;name&quot;</span>, <span class="cm-string">&quot;Alice&quot;</span>)
+  .<span class="cm-property">addHiddenDetail</span>(<span class="cm-string">&quot;phoneNumber&quot;</span>, <span class="cm-string">&quot;555-5555&quot;</span>)
+  .<span class="cm-property">build</span>();
+</code></pre>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authy/CallbackServlet.java" data-highlight="29-43" class="step"><h2 id="configuring-the-onetouch-callback">Configuring the OneTouch callback</h2>
+<p>In order for our app to know what the <em>user</em> did after we sent the
+OneTouch request, we need to register a callback endpoint with Authy.</p>
+<p><img src="//howtodocs.s3.amazonaws.com/onetouch-callback-
+endpoint.png" alt="Authy OneTouch Callback"></p>
+<p><strong>Note:</strong> In order to verify that the request is coming from Authy, we&#39;ve
+written the helper method <code>validate</code> that will halt the request if it
+appears it isn&#39;t coming from Authy.</p>
+<p>Here in our callback, we look up the <em>user</em> using the <em>Authy ID</em> sent with
+the Authy POST request. Ideally at this point we would probably use a
+websocket to let our client know that we received a response from Authy.
+However for this version we&#39;re going to keep it simple and just update the
+<code>AuthyStatus</code> on the User. Then all our client-side code needs to do is
+check for <code>user.AuthyStatus == &quot;approved&quot;</code> before logging her in.</p>
+<p>Let&#39;s take a look at the client-side code that will be handling this.</p>
+</div><div data-file="src/main/webapp/javascript/application.js" data-highlight="35-44" class="step"><h2 id="handle-two-factor-in-the-browser">Handle Two-Factor in the Browser</h2>
+<p>We&#39;ve already taken a look at what&#39;s happening on the server side, so let&#39;s
+step in front of the cameras and see how our JavaScript is interacting
+with those server endpoints.</p>
+<p>When we expect a OneTouch response, we will begin polling <code>/authy/status</code>
+until we see Authy status is not empty. Let&#39;s take a look at this controller
+and see what is happening.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//api.jquery.com/jquery.post/">jQuery Post method</a></li>
+<li><a href="//api.jquery.com/submit/">jQuery submit()</a></li>
+</ul>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authy/OneTouchStatusServlet.java" data-highlight="30-37" class="step"><h2 id="check-login-status">Check Login Status</h2>
+<p>Here is the endpoint that our JavaScript is polling. It is waiting for the
+user authy status.</p>
+</div><div data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java" data-highlight="30-58" class="step"><h2 id="finish-the-2fa-step">Finish the 2FA Step</h2>
+<p>If the <code>AuthyStatus</code> is <strong>approved</strong>, then the user will be redirected to the
+account page, otherwise we&#39;ll show the login form with a message that indicates
+the if the request was <em>denied</em> or <em>unauthorized</em>.</p>
+</div><div class="step"><h2 id="where-to-next-">Where to next?</h2>
+<p>That&#39;s it! We&#39;ve just implemented two-factor auth using three different
+methods and the latest in Authy technology.</p>
+<p>If you&#39;re a Java developer working with Twilio, you might enjoy these
+other tutorials:</p>
+<p><a href="//www.twilio.com/docs/tutorials/walkthrough/server-notifications/java/servlets"><strong>SMS and MMS Notifications</strong></a></p>
+<p>Faster than e-mail and less likely to get blocked, text messages are great
+for timely alerts and notifications. Learn how to send out SMS (and MMS)
+notifications to a list of server administrators.</p>
+<p><a href="//www.twilio.com/docs/tutorials/walkthrough/click-to-call/java/servlets"><strong>Click-To-Call</strong></a></p>
+<p>Click-to-call enables your company to convert web traffic into phone calls
+with the click of a button</p>
+<h3 id="did-this-help-">Did this help?</h3>
+<p>Thanks for checking out this tutorial! If you have any feedback to share
+with us, we&#39;d love to hear it. Tweet
+<a href="http://twitter.com/twilio">@twilio</a> to let us know what you think.</p>
+</div>
+<div class="saurus-files" style="display:none;"><textarea class="saurus-file" data-file="src/main/java/com/twilio/authy2fa/servlet/RegistrationServlet.java" data-mode="java">cGFja2FnZSBjb20udHdpbGlvLmF1dGh5MmZhLnNlcnZsZXQ7CgppbXBvcnQgY29tLmF1dGh5LkF1dGh5QXBpQ2xpZW50OwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5saWIuUmVxdWVzdFBhcmFtZXRlcnNWYWxpZGF0b3I7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLm1vZGVscy5Vc2VyOwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5tb2RlbHMuVXNlclNlcnZpY2U7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLmxpYi5TZXNzaW9uTWFuYWdlcjsKCmltcG9ydCBqYXZheC5zZXJ2bGV0LlNlcnZsZXRFeGNlcHRpb247CmltcG9ydCBqYXZheC5zZXJ2bGV0LmFubm90YXRpb24uV2ViU2VydmxldDsKaW1wb3J0IGphdmF4LnNlcnZsZXQuaHR0cC5IdHRwU2VydmxldDsKaW1wb3J0IGphdmF4LnNlcnZsZXQuaHR0cC5IdHRwU2VydmxldFJlcXVlc3Q7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXRSZXNwb25zZTsKaW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CgpAV2ViU2VydmxldCh1cmxQYXR0ZXJucyA9ICIvcmVnaXN0cmF0aW9uIikKcHVibGljIGNsYXNzIFJlZ2lzdHJhdGlvblNlcnZsZXQgZXh0ZW5kcyBIdHRwU2VydmxldHsKCiAgICBwcml2YXRlIGZpbmFsIFNlc3Npb25NYW5hZ2VyIHNlc3Npb25NYW5hZ2VyOwogICAgcHJpdmF0ZSBmaW5hbCBVc2VyU2VydmljZSB1c2VyU2VydmljZTsKICAgIHByaXZhdGUgZmluYWwgQXV0aHlBcGlDbGllbnQgYXV0aHlDbGllbnQ7CgogICAgQFN1cHByZXNzV2FybmluZ3MoInVudXNlZCIpCiAgICBwdWJsaWMgUmVnaXN0cmF0aW9uU2VydmxldCgpIHsKICAgICAgICB0aGlzKAogICAgICAgICAgICAgICAgbmV3IFNlc3Npb25NYW5hZ2VyKCksCiAgICAgICAgICAgICAgICBuZXcgVXNlclNlcnZpY2UoKSwKICAgICAgICAgICAgICAgIG5ldyBBdXRoeUFwaUNsaWVudChTeXN0ZW0uZ2V0ZW52KCJBVVRIWV9BUElfS0VZIikpCiAgICAgICAgKTsKICAgIH0KCiAgICBwdWJsaWMgUmVnaXN0cmF0aW9uU2VydmxldChTZXNzaW9uTWFuYWdlciBzZXNzaW9uTWFuYWdlciwgVXNlclNlcnZpY2UgdXNlclNlcnZpY2UsIEF1dGh5QXBpQ2xpZW50IGF1dGh5Q2xpZW50KSB7CiAgICAgICAgdGhpcy5zZXNzaW9uTWFuYWdlciA9IHNlc3Npb25NYW5hZ2VyOwogICAgICAgIHRoaXMudXNlclNlcnZpY2UgPSB1c2VyU2VydmljZTsKICAgICAgICB0aGlzLmF1dGh5Q2xpZW50ID0gYXV0aHlDbGllbnQ7CiAgICB9CgogICAgcHJvdGVjdGVkIHZvaWQgZG9HZXQoSHR0cFNlcnZsZXRSZXF1ZXN0IHJlcXVlc3QsIEh0dHBTZXJ2bGV0UmVzcG9uc2UgcmVzcG9uc2UpCiAgICAgICAgICAgIHRocm93cyBTZXJ2bGV0RXhjZXB0aW9uLCBJT0V4Y2VwdGlvbiB7CgogICAgICAgIHJlcXVlc3QuZ2V0UmVxdWVzdERpc3BhdGNoZXIoIi9yZWdpc3RyYXRpb24uanNwIikuZm9yd2FyZChyZXF1ZXN0LCByZXNwb25zZSk7CiAgICB9CgogICAgcHJvdGVjdGVkIHZvaWQgZG9Qb3N0KEh0dHBTZXJ2bGV0UmVxdWVzdCByZXF1ZXN0LCBIdHRwU2VydmxldFJlc3BvbnNlIHJlc3BvbnNlKQogICAgICAgICAgICB0aHJvd3MgU2VydmxldEV4Y2VwdGlvbiwgSU9FeGNlcHRpb24gewoKICAgICAgICBTdHJpbmcgbmFtZSA9IHJlcXVlc3QuZ2V0UGFyYW1ldGVyKCJuYW1lIik7CiAgICAgICAgU3RyaW5nIGVtYWlsID0gcmVxdWVzdC5nZXRQYXJhbWV0ZXIoImVtYWlsIik7CiAgICAgICAgU3RyaW5nIHBhc3N3b3JkID0gcmVxdWVzdC5nZXRQYXJhbWV0ZXIoInBhc3N3b3JkIik7CiAgICAgICAgU3RyaW5nIGNvdW50cnlDb2RlID0gcmVxdWVzdC5nZXRQYXJhbWV0ZXIoImNvdW50cnlDb2RlIik7CiAgICAgICAgU3RyaW5nIHBob25lTnVtYmVyID0gcmVxdWVzdC5nZXRQYXJhbWV0ZXIoInBob25lTnVtYmVyIik7CgogICAgICAgIGlmICh2YWxpZGF0ZVJlcXVlc3QocmVxdWVzdCkpIHsKCiAgICAgICAgICAgIFVzZXIgdXNlciA9IHVzZXJTZXJ2aWNlLmNyZWF0ZShuZXcgVXNlcihuYW1lLCBlbWFpbCwgcGFzc3dvcmQsIGNvdW50cnlDb2RlLCBwaG9uZU51bWJlcikpOwoKICAgICAgICAgICAgY29tLmF1dGh5LmFwaS5Vc2VyIGF1dGh5VXNlciA9IGF1dGh5Q2xpZW50LmdldFVzZXJzKCkuY3JlYXRlVXNlcihlbWFpbCwgcGhvbmVOdW1iZXIsIGNvdW50cnlDb2RlKTsKCiAgICAgICAgICAgIGlmIChhdXRoeVVzZXIuaXNPaygpKSB7CiAgICAgICAgICAgICAgICB1c2VyLnNldEF1dGh5SWQoSW50ZWdlci50b1N0cmluZyhhdXRoeVVzZXIuZ2V0SWQoKSkpOwogICAgICAgICAgICAgICAgdXNlclNlcnZpY2UudXBkYXRlKHVzZXIpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBzZXNzaW9uTWFuYWdlci5sb2dJbihyZXF1ZXN0LCB1c2VyLmdldElkKCkpOwogICAgICAgICAgICByZXNwb25zZS5zZW5kUmVkaXJlY3QoIi9hY2NvdW50Iik7CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgcHJlc2VydmVTdGF0dXNSZXF1ZXN0KHJlcXVlc3QsIG5hbWUsIGVtYWlsLCBjb3VudHJ5Q29kZSwgcGhvbmVOdW1iZXIpOwogICAgICAgICAgICByZXF1ZXN0LmdldFJlcXVlc3REaXNwYXRjaGVyKCIvcmVnaXN0cmF0aW9uLmpzcCIpLmZvcndhcmQocmVxdWVzdCwgcmVzcG9uc2UpOwogICAgICAgIH0KICAgIH0KCiAgICBwcml2YXRlIGJvb2xlYW4gdmFsaWRhdGVSZXF1ZXN0KEh0dHBTZXJ2bGV0UmVxdWVzdCByZXF1ZXN0KSB7CiAgICAgICAgUmVxdWVzdFBhcmFtZXRlcnNWYWxpZGF0b3IgdmFsaWRhdG9yID0gbmV3IFJlcXVlc3RQYXJhbWV0ZXJzVmFsaWRhdG9yKHJlcXVlc3QpOwoKICAgICAgICByZXR1cm4gdmFsaWRhdG9yLnZhbGlkYXRlUHJlc2VuY2UoIm5hbWUiLCAiZW1haWwiLCAicGFzc3dvcmQiLCAiY291bnRyeUNvZGUiLCAicGhvbmVOdW1iZXIiKQogICAgICAgICAgICAgICAgJiYgdmFsaWRhdG9yLnZhbGlkYXRlRW1haWwoImVtYWlsIik7CiAgICB9CgogICAgcHJpdmF0ZSB2b2lkIHByZXNlcnZlU3RhdHVzUmVxdWVzdCgKICAgICAgICAgICAgSHR0cFNlcnZsZXRSZXF1ZXN0IHJlcXVlc3QsCiAgICAgICAgICAgIFN0cmluZyBuYW1lLAogICAgICAgICAgICBTdHJpbmcgZW1haWwsCiAgICAgICAgICAgIFN0cmluZyBjb3VudHJ5Q29kZSwKICAgICAgICAgICAgU3RyaW5nIHBob25lTnVtYmVyKSB7CiAgICAgICAgcmVxdWVzdC5zZXRBdHRyaWJ1dGUoIm5hbWUiLCBuYW1lKTsKICAgICAgICByZXF1ZXN0LnNldEF0dHJpYnV0ZSgiZW1haWwiLCBlbWFpbCk7CiAgICAgICAgcmVxdWVzdC5zZXRBdHRyaWJ1dGUoImNvdW50cnlDb2RlIiwgY291bnRyeUNvZGUpOwogICAgICAgIHJlcXVlc3Quc2V0QXR0cmlidXRlKCJwaG9uZU51bWJlciIsIHBob25lTnVtYmVyKTsKICAgIH0KfQo=</textarea>
+<textarea class="saurus-file" data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/LogInServlet.java" data-mode="java">cGFja2FnZSBjb20udHdpbGlvLmF1dGh5MmZhLnNlcnZsZXQuYXV0aGVudGljYXRpb247CgppbXBvcnQgY29tLmF1dGh5Lm9uZXRvdWNoLkNsaWVudDsKaW1wb3J0IGNvbS5hdXRoeS5vbmV0b3VjaC5hcHByb3ZhbHJlcXVlc3QuUGFyYW1ldGVyczsKaW1wb3J0IGNvbS5hdXRoeS5vbmV0b3VjaC5hcHByb3ZhbHJlcXVlc3QuUmVzdWx0OwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5saWIuU2Vzc2lvbk1hbmFnZXI7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLm1vZGVscy5Vc2VyOwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5tb2RlbHMuVXNlclNlcnZpY2U7CgppbXBvcnQgamF2YXguc2VydmxldC5TZXJ2bGV0RXhjZXB0aW9uOwppbXBvcnQgamF2YXguc2VydmxldC5hbm5vdGF0aW9uLldlYlNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXRSZXF1ZXN0OwppbXBvcnQgamF2YXguc2VydmxldC5odHRwLkh0dHBTZXJ2bGV0UmVzcG9uc2U7CmltcG9ydCBqYXZhLmlvLklPRXhjZXB0aW9uOwoKQFdlYlNlcnZsZXQodXJsUGF0dGVybnMgPSB7Ii9sb2dpbiJ9KQpwdWJsaWMgY2xhc3MgTG9nSW5TZXJ2bGV0IGV4dGVuZHMgSHR0cFNlcnZsZXQgewoKICAgIHByaXZhdGUgZmluYWwgU2Vzc2lvbk1hbmFnZXIgc2Vzc2lvbk1hbmFnZXI7CiAgICBwcml2YXRlIGZpbmFsIFVzZXJTZXJ2aWNlIHVzZXJTZXJ2aWNlOwogICAgcHJpdmF0ZSBmaW5hbCBDbGllbnQgY2xpZW50OwoKICAgIEBTdXBwcmVzc1dhcm5pbmdzKCJ1bnVzZWQiKQogICAgcHVibGljIExvZ0luU2VydmxldCgpIHsKICAgICAgICB0aGlzKAogICAgICAgICAgICAgICAgbmV3IFNlc3Npb25NYW5hZ2VyKCksCiAgICAgICAgICAgICAgICBuZXcgVXNlclNlcnZpY2UoKSwKICAgICAgICAgICAgICAgIG5ldyBDbGllbnQoU3lzdGVtLmdldGVudigiQVVUSFlfQVBJX0tFWSIpKQogICAgICAgICk7CiAgICB9CgogICAgcHVibGljIExvZ0luU2VydmxldChTZXNzaW9uTWFuYWdlciBzZXNzaW9uTWFuYWdlciwgVXNlclNlcnZpY2UgdXNlclNlcnZpY2UsIENsaWVudCBjbGllbnQpIHsKICAgICAgICB0aGlzLnNlc3Npb25NYW5hZ2VyID0gc2Vzc2lvbk1hbmFnZXI7CiAgICAgICAgdGhpcy51c2VyU2VydmljZSA9IHVzZXJTZXJ2aWNlOwogICAgICAgIHRoaXMuY2xpZW50ID0gY2xpZW50OwogICAgfQoKICAgIHByb3RlY3RlZCB2b2lkIGRvR2V0KEh0dHBTZXJ2bGV0UmVxdWVzdCByZXF1ZXN0LCBIdHRwU2VydmxldFJlc3BvbnNlIHJlc3BvbnNlKQogICAgICAgICAgICB0aHJvd3MgU2VydmxldEV4Y2VwdGlvbiwgSU9FeGNlcHRpb24gewogICAgICAgIGdldFNlcnZsZXRDb250ZXh0KCkuZ2V0UmVxdWVzdERpc3BhdGNoZXIoIi9sb2dpbi5qc3AiKS5mb3J3YXJkKHJlcXVlc3QsIHJlc3BvbnNlKTsKICAgIH0KCiAgICBwcm90ZWN0ZWQgdm9pZCBkb1Bvc3QoSHR0cFNlcnZsZXRSZXF1ZXN0IHJlcXVlc3QsIEh0dHBTZXJ2bGV0UmVzcG9uc2UgcmVzcG9uc2UpCiAgICAgICAgICAgIHRocm93cyBTZXJ2bGV0RXhjZXB0aW9uLCBJT0V4Y2VwdGlvbiB7CgogICAgICAgIFN0cmluZyBlbWFpbCA9IHJlcXVlc3QuZ2V0UGFyYW1ldGVyKCJlbWFpbCIpOwogICAgICAgIFN0cmluZyBwYXNzd29yZCA9IHJlcXVlc3QuZ2V0UGFyYW1ldGVyKCJwYXNzd29yZCIpOwoKICAgICAgICBVc2VyIHVzZXIgPSB1c2VyU2VydmljZS5maW5kQnlFbWFpbChlbWFpbCk7CiAgICAgICAgaWYgKHVzZXIgIT0gbnVsbCAmJiB1c2VyLmdldFBhc3N3b3JkKCkuZXF1YWxzKHBhc3N3b3JkKSkgewoKICAgICAgICAgICAgc2Vzc2lvbk1hbmFnZXIucGFydGlhbExvZ0luKHJlcXVlc3QsIHVzZXIuZ2V0SWQoKSk7CgogICAgICAgICAgICBSZXN1bHQgcmVzdWx0ID0gc2VuZEFwcHJvdmFsUmVxdWVzdCh1c2VyKTsKICAgICAgICAgICAgU3RyaW5nIHZlcmlmaWNhdGlvblN0cmF0ZWd5ID0gcmVzdWx0LmlzT2soKSA/ICJvbmV0b3VjaCIgOiAic21zIjsKICAgICAgICAgICAgcmVzcG9uc2UuZ2V0T3V0cHV0U3RyZWFtKCkud3JpdGUodmVyaWZpY2F0aW9uU3RyYXRlZ3kuZ2V0Qnl0ZXMoKSk7CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgcmVzcG9uc2UuZ2V0T3V0cHV0U3RyZWFtKCkud3JpdGUoInVuYXV0aG9yaXplZCIuZ2V0Qnl0ZXMoKSk7CiAgICAgICAgfQogICAgfQoKICAgIHByaXZhdGUgUmVzdWx0IHNlbmRBcHByb3ZhbFJlcXVlc3QoVXNlciB1c2VyKSB0aHJvd3MgSU9FeGNlcHRpb24gewogICAgICAgIFBhcmFtZXRlcnMgcGFyYW1ldGVycyA9IFBhcmFtZXRlcnMuYnVpbGRlcigpCiAgICAgICAgICAgICAgICAuYWRkRGV0YWlsKCJlbWFpbCIsIHVzZXIuZ2V0RW1haWwoKSkKICAgICAgICAgICAgICAgIC5idWlsZCgpOwoKICAgICAgICByZXR1cm4gY2xpZW50LnNlbmRBcHByb3ZhbFJlcXVlc3QoCiAgICAgICAgICAgICAgICB1c2VyLmdldEF1dGh5SWQoKSwgIlJlcXVlc3QgbG9naW4gdG8gVHdpbGlvIGRlbW8gYXBwIiwgcGFyYW1ldGVycyk7CiAgICB9Cn0K</textarea>
+<textarea class="saurus-file" data-file="src/main/java/com/twilio/authy2fa/servlet/authy/CallbackServlet.java" data-mode="java">cGFja2FnZSBjb20udHdpbGlvLmF1dGh5MmZhLnNlcnZsZXQuYXV0aHk7CgppbXBvcnQgY29tLmF1dGh5Lm9uZXRvdWNoLlJlcXVlc3RWYWxpZGF0b3I7CmltcG9ydCBjb20uYXV0aHkub25ldG91Y2gucmVxdWVzdHZhbGlkYXRvci5SZXF1ZXN0VmFsaWRhdGlvblJlc3VsdDsKaW1wb3J0IGNvbS50d2lsaW8uYXV0aHkyZmEubW9kZWxzLlVzZXI7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLm1vZGVscy5Vc2VyU2VydmljZTsKCmltcG9ydCBqYXZheC5zZXJ2bGV0LlNlcnZsZXRFeGNlcHRpb247CmltcG9ydCBqYXZheC5zZXJ2bGV0LmFubm90YXRpb24uV2ViU2VydmxldDsKaW1wb3J0IGphdmF4LnNlcnZsZXQuaHR0cC5IdHRwU2VydmxldDsKaW1wb3J0IGphdmF4LnNlcnZsZXQuaHR0cC5IdHRwU2VydmxldFJlcXVlc3Q7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXRSZXNwb25zZTsKaW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CgpAV2ViU2VydmxldCh1cmxQYXR0ZXJucyA9IHsiL2F1dGh5L2NhbGxiYWNrIn0pCnB1YmxpYyBjbGFzcyBDYWxsYmFja1NlcnZsZXQgZXh0ZW5kcyBIdHRwU2VydmxldCB7CgogICAgcHJpdmF0ZSBmaW5hbCBVc2VyU2VydmljZSB1c2VyU2VydmljZTsKCiAgICBAU3VwcHJlc3NXYXJuaW5ncygidW51c2VkIikKICAgIHB1YmxpYyBDYWxsYmFja1NlcnZsZXQoKSB7CiAgICAgICAgdGhpcyhuZXcgVXNlclNlcnZpY2UoKSk7CiAgICB9CgogICAgcHVibGljIENhbGxiYWNrU2VydmxldChVc2VyU2VydmljZSB1c2VyU2VydmljZSkgewogICAgICAgIHRoaXMudXNlclNlcnZpY2UgPSB1c2VyU2VydmljZTsKICAgIH0KCiAgICBwcm90ZWN0ZWQgdm9pZCBkb1Bvc3QoSHR0cFNlcnZsZXRSZXF1ZXN0IHJlcXVlc3QsIEh0dHBTZXJ2bGV0UmVzcG9uc2UgcmVzcG9uc2UpCiAgICAgICAgICAgIHRocm93cyBTZXJ2bGV0RXhjZXB0aW9uLCBJT0V4Y2VwdGlvbiB7CgogICAgICAgIFJlcXVlc3RWYWxpZGF0b3IgdmFsaWRhdG9yID0gbmV3IFJlcXVlc3RWYWxpZGF0b3IoU3lzdGVtLmdldGVudigiQVVUSFlfQVBJX0tFWSIpLCByZXF1ZXN0KTsKICAgICAgICBSZXF1ZXN0VmFsaWRhdGlvblJlc3VsdCB2YWxpZGF0aW9uUmVzdWx0ID0gdmFsaWRhdG9yLnZhbGlkYXRlKCk7CgogICAgICAgIGlmICh2YWxpZGF0aW9uUmVzdWx0LmlzVmFsaWQoKSkgewoKICAgICAgICAgICAgLy8gSGFuZGxlIGFwcHJvdmVkLCBkZW5pZWQsIHVuYXV0aG9yaXplZAogICAgICAgICAgICBVc2VyIHVzZXIgPSB1c2VyU2VydmljZS5maW5kQnlBdXRoeUlkKHZhbGlkYXRpb25SZXN1bHQuZ2V0QXV0aHlJZCgpKTsKICAgICAgICAgICAgdXNlci5zZXRBdXRoeVN0YXR1cyh2YWxpZGF0aW9uUmVzdWx0LmdldFN0YXR1cygpKTsKCiAgICAgICAgICAgIHVzZXJTZXJ2aWNlLnVwZGF0ZSh1c2VyKTsKICAgICAgICB9CiAgICB9Cn0K</textarea>
+<textarea class="saurus-file" data-file="src/main/webapp/javascript/application.js" data-mode="javascript">JChkb2N1bWVudCkucmVhZHkoZnVuY3Rpb24oKSB7CiAgICAkKCIjbG9naW4tZm9ybSIpLnN1Ym1pdChmdW5jdGlvbihldmVudCkgewogICAgICAgIGV2ZW50LnByZXZlbnREZWZhdWx0KCk7CgogICAgICAgIHZhciBkYXRhID0gJChldmVudC5jdXJyZW50VGFyZ2V0KS5zZXJpYWxpemUoKTsKICAgICAgICBhdXRoeVZlcmlmaWNhdGlvbihkYXRhKTsKICAgIH0pOwoKICAgIHZhciBhdXRoeVZlcmlmaWNhdGlvbiA9IGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgICAgJC5wb3N0KCIvbG9naW4iLCBkYXRhLCBmdW5jdGlvbiAocmVzdWx0KSB7CiAgICAgICAgICAgIHJlc3VsdEFjdGlvbnNbcmVzdWx0XSgpOwogICAgICAgIH0pOwogICAgfTsKCiAgICB2YXIgcmVzdWx0QWN0aW9ucyA9IHsKICAgICAgICBvbmV0b3VjaDogZnVuY3Rpb24oKSB7CiAgICAgICAgICAgICQoIiNhdXRoeS1tb2RhbCIpLm1vZGFsKHsgYmFja2Ryb3A6ICJzdGF0aWMiIH0sICJzaG93Iik7CiAgICAgICAgICAgICQoIi5hdXRoLXRva2VuIikuaGlkZSgpOwogICAgICAgICAgICAkKCIuYXV0aC1vbmV0b3VjaCIpLmZhZGVJbigpOwogICAgICAgICAgICBtb25pdG9yT25lVG91Y2hTdGF0dXMoKTsKICAgICAgICB9LAoKICAgICAgICBzbXM6IGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgJCgiI2F1dGh5LW1vZGFsIikubW9kYWwoeyBiYWNrZHJvcDogInN0YXRpYyIgfSwgInNob3ciKTsKICAgICAgICAgICAgJCgiLmF1dGgtb25ldG91Y2giKS5oaWRlKCk7CiAgICAgICAgICAgICQoIi5hdXRoLXRva2VuIikuZmFkZUluKCk7CiAgICAgICAgICAgIHJlcXVlc3RBdXRoeVRva2VuKCk7CiAgICAgICAgfSwKCiAgICAgICAgdW5hdXRob3JpemVkOiBmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgICQoIiNlcnJvci1tZXNzYWdlIikudGV4dCgiSW52YWxpZCBjcmVkZW50aWFscyIpOwogICAgICAgIH0KICAgIH07CgogICAgdmFyIG1vbml0b3JPbmVUb3VjaFN0YXR1cyA9IGZ1bmN0aW9uICgpIHsKICAgICAgICAkLnBvc3QoIi9hdXRoeS9zdGF0dXMiKQogICAgICAgICAgICAuZG9uZShmdW5jdGlvbiAoZGF0YSkgewogICAgICAgICAgICAgICAgaWYgKGRhdGEgPT09ICIiKSB7CiAgICAgICAgICAgICAgICAgICAgc2V0VGltZW91dChtb25pdG9yT25lVG91Y2hTdGF0dXMsIDIwMDApOwogICAgICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgICAgICAkKCIjY29uZmlybS1sb2dpbiIpLnN1Ym1pdCgpOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9KTsKICAgIH0KCiAgICB2YXIgcmVxdWVzdEF1dGh5VG9rZW4gPSBmdW5jdGlvbiAoKSB7CiAgICAgICAgJC5wb3N0KCIvYXV0aHkvcmVxdWVzdC10b2tlbiIpCiAgICAgICAgICAgIC5kb25lKGZ1bmN0aW9uIChkYXRhKSB7CiAgICAgICAgICAgICAgICAkKCIjYXV0aHktdG9rZW4tbGFiZWwiKS50ZXh0KGRhdGEpOwogICAgICAgICAgICB9KTsKICAgIH0KCiAgICAkKCIjbG9nb3V0IikuY2xpY2soZnVuY3Rpb24oKSB7CiAgICAgICAgJCgiI2xvZ291dC1mb3JtIikuc3VibWl0KCk7CiAgICB9KTsKfSk7</textarea>
+<textarea class="saurus-file" data-file="src/main/java/com/twilio/authy2fa/servlet/authy/OneTouchStatusServlet.java" data-mode="java">cGFja2FnZSBjb20udHdpbGlvLmF1dGh5MmZhLnNlcnZsZXQuYXV0aHk7CgppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5saWIuU2Vzc2lvbk1hbmFnZXI7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLm1vZGVscy5Vc2VyOwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5tb2RlbHMuVXNlclNlcnZpY2U7CgppbXBvcnQgamF2YXguc2VydmxldC5TZXJ2bGV0RXhjZXB0aW9uOwppbXBvcnQgamF2YXguc2VydmxldC5hbm5vdGF0aW9uLldlYlNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXRSZXF1ZXN0OwppbXBvcnQgamF2YXguc2VydmxldC5odHRwLkh0dHBTZXJ2bGV0UmVzcG9uc2U7CmltcG9ydCBqYXZhLmlvLklPRXhjZXB0aW9uOwoKQFdlYlNlcnZsZXQodXJsUGF0dGVybnMgPSB7Ii9hdXRoeS9zdGF0dXMifSkKcHVibGljIGNsYXNzIE9uZVRvdWNoU3RhdHVzU2VydmxldCBleHRlbmRzIEh0dHBTZXJ2bGV0IHsKCiAgICBwcml2YXRlIGZpbmFsIFNlc3Npb25NYW5hZ2VyIHNlc3Npb25NYW5hZ2VyOwogICAgcHJpdmF0ZSBmaW5hbCBVc2VyU2VydmljZSB1c2VyU2VydmljZTsKCiAgICBAU3VwcHJlc3NXYXJuaW5ncygidW51c2VkIikKICAgIHB1YmxpYyBPbmVUb3VjaFN0YXR1c1NlcnZsZXQoKSB7CiAgICAgICAgdGhpcyhuZXcgU2Vzc2lvbk1hbmFnZXIoKSwgbmV3IFVzZXJTZXJ2aWNlKCkpOwogICAgfQoKICAgIHB1YmxpYyBPbmVUb3VjaFN0YXR1c1NlcnZsZXQoU2Vzc2lvbk1hbmFnZXIgc2Vzc2lvbk1hbmFnZXIsIFVzZXJTZXJ2aWNlIHVzZXJTZXJ2aWNlKSB7CiAgICAgICAgdGhpcy5zZXNzaW9uTWFuYWdlciA9IHNlc3Npb25NYW5hZ2VyOwogICAgICAgIHRoaXMudXNlclNlcnZpY2UgPSB1c2VyU2VydmljZTsKICAgIH0KCiAgICBwcm90ZWN0ZWQgdm9pZCBkb1Bvc3QoSHR0cFNlcnZsZXRSZXF1ZXN0IHJlcXVlc3QsIEh0dHBTZXJ2bGV0UmVzcG9uc2UgcmVzcG9uc2UpCiAgICAgICAgICAgIHRocm93cyBTZXJ2bGV0RXhjZXB0aW9uLCBJT0V4Y2VwdGlvbiB7CgogICAgICAgIGxvbmcgdXNlcklkID0gc2Vzc2lvbk1hbmFnZXIuZ2V0TG9nZ2VkVXNlcklkKHJlcXVlc3QpOwogICAgICAgIFVzZXIgdXNlciA9IHVzZXJTZXJ2aWNlLmZpbmQodXNlcklkKTsKCiAgICAgICAgcmVzcG9uc2UuZ2V0T3V0cHV0U3RyZWFtKCkud3JpdGUodXNlci5nZXRBdXRoeVN0YXR1cygpLmdldEJ5dGVzKCkpOwogICAgfQp9Cg==</textarea>
+<textarea class="saurus-file" data-file="src/main/java/com/twilio/authy2fa/servlet/authentication/ConfirmLogInServlet.java" data-mode="java">cGFja2FnZSBjb20udHdpbGlvLmF1dGh5MmZhLnNlcnZsZXQuYXV0aGVudGljYXRpb247CgppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5saWIuU2Vzc2lvbk1hbmFnZXI7CmltcG9ydCBjb20udHdpbGlvLmF1dGh5MmZhLm1vZGVscy5Vc2VyOwppbXBvcnQgY29tLnR3aWxpby5hdXRoeTJmYS5tb2RlbHMuVXNlclNlcnZpY2U7CgppbXBvcnQgamF2YXguc2VydmxldC5TZXJ2bGV0RXhjZXB0aW9uOwppbXBvcnQgamF2YXguc2VydmxldC5hbm5vdGF0aW9uLldlYlNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXQ7CmltcG9ydCBqYXZheC5zZXJ2bGV0Lmh0dHAuSHR0cFNlcnZsZXRSZXF1ZXN0OwppbXBvcnQgamF2YXguc2VydmxldC5odHRwLkh0dHBTZXJ2bGV0UmVzcG9uc2U7CmltcG9ydCBqYXZhLmlvLklPRXhjZXB0aW9uOwoKQFdlYlNlcnZsZXQodXJsUGF0dGVybnMgPSB7Ii9jb25maXJtLWxvZ2luIn0pCnB1YmxpYyBjbGFzcyBDb25maXJtTG9nSW5TZXJ2bGV0IGV4dGVuZHMgSHR0cFNlcnZsZXQgewoKICAgIHByaXZhdGUgZmluYWwgU2Vzc2lvbk1hbmFnZXIgc2Vzc2lvbk1hbmFnZXI7CiAgICBwcml2YXRlIGZpbmFsIFVzZXJTZXJ2aWNlIHVzZXJTZXJ2aWNlOwoKICAgIEBTdXBwcmVzc1dhcm5pbmdzKCJ1bnVzZWQiKQogICAgcHVibGljIENvbmZpcm1Mb2dJblNlcnZsZXQoKSB7CiAgICAgICAgdGhpcyhuZXcgU2Vzc2lvbk1hbmFnZXIoKSwgbmV3IFVzZXJTZXJ2aWNlKCkpOwogICAgfQoKICAgIHB1YmxpYyBDb25maXJtTG9nSW5TZXJ2bGV0KFNlc3Npb25NYW5hZ2VyIHNlc3Npb25NYW5hZ2VyLCBVc2VyU2VydmljZSB1c2VyU2VydmljZSkgewogICAgICAgIHRoaXMuc2Vzc2lvbk1hbmFnZXIgPSBzZXNzaW9uTWFuYWdlcjsKICAgICAgICB0aGlzLnVzZXJTZXJ2aWNlID0gdXNlclNlcnZpY2U7CiAgICB9CgogICAgcHJvdGVjdGVkIHZvaWQgZG9Qb3N0KEh0dHBTZXJ2bGV0UmVxdWVzdCByZXF1ZXN0LCBIdHRwU2VydmxldFJlc3BvbnNlIHJlc3BvbnNlKQogICAgICAgICAgICB0aHJvd3MgU2VydmxldEV4Y2VwdGlvbiwgSU9FeGNlcHRpb24gewoKICAgICAgICBsb25nIHVzZXJJZCA9IHNlc3Npb25NYW5hZ2VyLmdldExvZ2dlZFVzZXJJZChyZXF1ZXN0KTsKICAgICAgICBVc2VyIHVzZXIgPSB1c2VyU2VydmljZS5maW5kKHVzZXJJZCk7CgogICAgICAgIFN0cmluZyBhdXRoeVN0YXR1cyA9IHVzZXIuZ2V0QXV0aHlTdGF0dXMoKTsKCiAgICAgICAgLy8gUmVzZXQgdGhlIEF1dGh5IHN0YXR1cwogICAgICAgIHVzZXIuc2V0QXV0aHlTdGF0dXMoIiIpOwogICAgICAgIHVzZXJTZXJ2aWNlLnVwZGF0ZSh1c2VyKTsKCiAgICAgICAgc3dpdGNoIChhdXRoeVN0YXR1cykgewogICAgICAgICAgICBjYXNlICJhcHByb3ZlZCI6CiAgICAgICAgICAgICAgICBzZXNzaW9uTWFuYWdlci5sb2dJbihyZXF1ZXN0LCB1c2VyLmdldElkKCkpOwogICAgICAgICAgICAgICAgcmVzcG9uc2Uuc2VuZFJlZGlyZWN0KCIvYWNjb3VudCIpOwogICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgIGNhc2UgImRlbmllZCI6CiAgICAgICAgICAgICAgICBzZXNzaW9uTWFuYWdlci5sb2dPdXQocmVxdWVzdCk7CiAgICAgICAgICAgICAgICByZXF1ZXN0LnNldEF0dHJpYnV0ZSgiZGF0YSIsICJZb3UgaGF2ZSBkZWNsaW5lZCB0aGUgcmVxdWVzdCIpOwogICAgICAgICAgICAgICAgcmVxdWVzdC5nZXRSZXF1ZXN0RGlzcGF0Y2hlcigiL2xvZ2luLmpzcCIpLmZvcndhcmQocmVxdWVzdCwgcmVzcG9uc2UpOwogICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgIGRlZmF1bHQ6CiAgICAgICAgICAgICAgICBzZXNzaW9uTWFuYWdlci5sb2dPdXQocmVxdWVzdCk7CiAgICAgICAgICAgICAgICByZXF1ZXN0LnNldEF0dHJpYnV0ZSgiZGF0YSIsICJVbmF1dGhvcml6ZWQgYWNjZXNzIik7CiAgICAgICAgICAgICAgICByZXF1ZXN0LmdldFJlcXVlc3REaXNwYXRjaGVyKCIvbG9naW4uanNwIikuZm9yd2FyZChyZXF1ZXN0LCByZXNwb25zZSk7CiAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICB9CiAgICB9Cn0K</textarea>
+</div>
+</div><div class="saurus-overview"><ul></ul></div></div><div class="saurus-code"><div class="file-path"><span class="crumb-container"></span><i class="fa fa-fw fa-folder"></i></div><div class="saurus-editor"></div></div><div class="saurus-explorer"><div class="saurus-file-list"></div><a href="https://github.com/TwilioDevEd/authy2fa-servlets" target="_blank" class="explorer-get-code"> <i class="fa fa-lg fa-github-square"> </i>View Code on GitHub</a></div></div></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script><script src="ace/ace.js"></script><script src="ace/theme-monokai.js"></script><script src="viewsaurus.js"></script></body></html>
