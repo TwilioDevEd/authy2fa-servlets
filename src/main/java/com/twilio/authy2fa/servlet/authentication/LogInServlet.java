@@ -23,7 +23,6 @@ public class LogInServlet extends HttpServlet {
 
     private final SessionManager sessionManager;
     private final UserService userService;
-    private final AuthyApiClient client;
     private final ApprovalRequestService approvalRequestService;
 
     @SuppressWarnings("unused")
@@ -31,15 +30,13 @@ public class LogInServlet extends HttpServlet {
         this(
                 new SessionManager(),
                 new UserService(),
-                new AuthyApiClient(System.getenv("AUTHY_API_KEY")),
                 new ApprovalRequestService());
     }
 
     public LogInServlet(SessionManager sessionManager, UserService userService,
-                        AuthyApiClient client, ApprovalRequestService approvalRequestService) {
+                        ApprovalRequestService approvalRequestService) {
         this.sessionManager = sessionManager;
         this.userService = userService;
-        this.client = client;
         this.approvalRequestService = approvalRequestService;
     }
 
@@ -58,8 +55,8 @@ public class LogInServlet extends HttpServlet {
         if (user != null && user.getPassword().equals(password)) {
             sessionManager.partialLogIn(request, user.getId());
             try {
-                String verificationStrategy = approvalRequestService.sendApprovalRequest(user,
-                        client);
+                String verificationStrategy = approvalRequestService
+                        .sendApprovalRequest(user);
                 response.getOutputStream().write(verificationStrategy.getBytes());
             } catch (ApprovalRequestException e) {
                 LOGGER.error(e.getMessage());

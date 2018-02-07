@@ -36,9 +36,6 @@ public class LogInServletTest {
     private UserService userService;
 
     @Mock
-    private AuthyApiClient authyApiClient;
-
-    @Mock
     private ApprovalRequestService approvalRequestService;
 
     private MockServletOutputStream mockServletOutputStream;
@@ -59,7 +56,7 @@ public class LogInServletTest {
         mockServletOutputStream = new MockServletOutputStream();
         when(response.getOutputStream()).thenReturn(mockServletOutputStream);
 
-        subject = new LogInServlet(sessionManager, userService, authyApiClient, approvalRequestService);
+        subject = new LogInServlet(sessionManager, userService, approvalRequestService);
     }
 
 
@@ -70,7 +67,7 @@ public class LogInServletTest {
         when(request.getParameter("password")).thenReturn(password);
         when(userService.findByEmail(anyString())).thenReturn(user);
 
-        when(approvalRequestService.sendApprovalRequest(user, authyApiClient))
+        when(approvalRequestService.sendApprovalRequest(user))
                 .thenReturn("sms");
 
         // When
@@ -78,7 +75,7 @@ public class LogInServletTest {
 
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
-        verify(approvalRequestService).sendApprovalRequest(any(), any());
+        verify(approvalRequestService).sendApprovalRequest(any());
         assertEquals("sms", mockServletOutputStream.toString());
     }
 
@@ -88,7 +85,7 @@ public class LogInServletTest {
         // Given
         when(request.getParameter("password")).thenReturn(password);
         when(userService.findByEmail(anyString())).thenReturn(user);
-        when(approvalRequestService.sendApprovalRequest(user, authyApiClient))
+        when(approvalRequestService.sendApprovalRequest(user))
                 .thenThrow(new ApprovalRequestException("exception message"));
 
         // When
@@ -96,7 +93,7 @@ public class LogInServletTest {
 
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
-        verify(approvalRequestService).sendApprovalRequest(any(), any());
+        verify(approvalRequestService).sendApprovalRequest(any());
         assertEquals("unexpectedError", mockServletOutputStream.toString());
     }
 
@@ -111,7 +108,7 @@ public class LogInServletTest {
 
         // Then
         verify(sessionManager, never()).partialLogIn(request, user.getId());
-        verify(approvalRequestService, never()).sendApprovalRequest(any(), any());
+        verify(approvalRequestService, never()).sendApprovalRequest(any());
         assertEquals("unauthorized", mockServletOutputStream.toString());
     }
 }

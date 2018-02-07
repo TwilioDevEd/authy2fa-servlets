@@ -21,21 +21,24 @@ public class ApprovalRequestService {
     private final String authyBaseURL;
 
     private final ConfigurationService configuration;
+    private final AuthyApiClient client;
 
     public ApprovalRequestService() {
         this.authyBaseURL =  "https://api.authy.com";
         this.configuration = new ConfigurationService();
+        this.client = new AuthyApiClient(configuration.authyApiKey());
     }
 
-    public ApprovalRequestService(String authyBaseURL, ConfigurationService configuration) {
+    public ApprovalRequestService(String authyBaseURL, ConfigurationService configuration, AuthyApiClient client) {
         this.authyBaseURL = authyBaseURL;
         this.configuration = configuration;
+        this.client = client;
     }
 
-    public String sendApprovalRequest(User user, AuthyApiClient client) {
+    public String sendApprovalRequest(User user) {
         if(hasAuthyApp(user)){
             try {
-                OneTouchResponse result = sendOneTouchApprovalRequest(user, client);
+                OneTouchResponse result = sendOneTouchApprovalRequest(user);
                 if(!result.isSuccess()) {
                     throw new ApprovalRequestException(result.getMessage());
                 }
@@ -44,7 +47,7 @@ public class ApprovalRequestService {
                 throw new ApprovalRequestException(e.getMessage());
             }
         } else {
-            Hash result = sendSMSToken(user, client);
+            Hash result = sendSMSToken(user);
             if(!result.isSuccess()) {
                 throw new ApprovalRequestException(result.getMessage());
             }
@@ -74,7 +77,7 @@ public class ApprovalRequestService {
         }
     }
 
-    private OneTouchResponse sendOneTouchApprovalRequest(User user, AuthyApiClient client)
+    private OneTouchResponse sendOneTouchApprovalRequest(User user)
             throws IOException, OneTouchException {
         ApprovalRequestParams parameters = new ApprovalRequestParams.Builder(
                 Integer.valueOf(user.getAuthyId()),
@@ -85,7 +88,7 @@ public class ApprovalRequestService {
         return client.getOneTouch().sendApprovalRequest(parameters);
     }
 
-    private Hash sendSMSToken(User user, AuthyApiClient client){
+    private Hash sendSMSToken(User user){
         return client.getUsers().requestSms(Integer.valueOf(user.getAuthyId()));
     }
 } 

@@ -64,7 +64,7 @@ public class ApprovalRequestServiceTest {
     public void setUp() throws OneTouchException {
         MockitoAnnotations.initMocks(this);
 
-        subject = new ApprovalRequestService("http://localhost:8085", configuration);
+        subject = new ApprovalRequestService("http://localhost:8085", configuration, client);
         user = new User();
         user.setAuthyId(String.valueOf(authyid));
         user.setEmail("email");
@@ -85,7 +85,7 @@ public class ApprovalRequestServiceTest {
         when(oneTouchResponse.isSuccess()).thenReturn(true);
 
         // When
-        String verificationStrategy = subject.sendApprovalRequest(user, client);
+        String verificationStrategy = subject.sendApprovalRequest(user);
 
         // Then
         assertEquals(verificationStrategy, "onetouch");
@@ -104,7 +104,7 @@ public class ApprovalRequestServiceTest {
 
         // When
         try {
-            subject.sendApprovalRequest(user, client);
+            subject.sendApprovalRequest(user);
             fail("Exception expected");
         } catch(ApprovalRequestException e) {
             // Then
@@ -123,7 +123,7 @@ public class ApprovalRequestServiceTest {
         when(hash.isSuccess()).thenReturn(true);
 
         // When
-        String verificationStrategy = subject.sendApprovalRequest(user, client);
+        String verificationStrategy = subject.sendApprovalRequest(user);
 
         // Then
         assertEquals(verificationStrategy, "sms");
@@ -142,7 +142,7 @@ public class ApprovalRequestServiceTest {
 
         // When
         try {
-            subject.sendApprovalRequest(user, client);
+            subject.sendApprovalRequest(user);
             fail("Exception expected");
         } catch(ApprovalRequestException e) {
             // Then
