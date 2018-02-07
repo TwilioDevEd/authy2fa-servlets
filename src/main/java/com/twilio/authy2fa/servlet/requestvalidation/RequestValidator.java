@@ -1,8 +1,5 @@
-package com.authy.onetouch;
+package com.twilio.authy2fa.servlet.requestvalidation;
 
-import com.authy.lib.ContentReader;
-import com.authy.lib.JSONEncoder;
-import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;

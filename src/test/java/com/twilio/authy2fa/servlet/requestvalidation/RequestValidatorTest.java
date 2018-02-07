@@ -1,7 +1,5 @@
-package com.authy.lib.onetouch;
+package com.twilio.authy2fa.servlet.requestvalidation;
 
-import com.authy.onetouch.RequestValidator;
-import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

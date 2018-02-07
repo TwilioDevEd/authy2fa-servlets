@@ -1,4 +1,4 @@
-package com.authy.onetouch.requestvalidator;
+package com.twilio.authy2fa.servlet.requestvalidation;
 
 public class RequestValidationResult {
 
