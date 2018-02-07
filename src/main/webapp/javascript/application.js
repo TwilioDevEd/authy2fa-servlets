@@ -29,6 +29,10 @@ $(document).ready(function() {
 
         unauthorized: function () {
             $("#error-message").text("Invalid credentials");
+        },
+
+        unexpectedError: function () {
+            $("#error-message").text("Unexpected error. Check the logs");
         }
     };
 

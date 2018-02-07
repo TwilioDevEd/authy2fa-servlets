@@ -1,9 +1,9 @@
 package com.twilio.authy2fa.servlet.authy;
 
-import com.authy.onetouch.RequestValidator;
-import com.authy.onetouch.requestvalidator.RequestValidationResult;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
+import com.twilio.authy2fa.servlet.requestvalidation.RequestValidationResult;
+import com.twilio.authy2fa.servlet.requestvalidation.RequestValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

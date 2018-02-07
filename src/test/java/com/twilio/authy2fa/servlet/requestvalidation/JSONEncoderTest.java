@@ -1,4 +1,4 @@
-package com.authy.lib;
+package com.twilio.authy2fa.servlet.requestvalidation;
 
 import org.json.JSONObject;
 import org.junit.Test;
