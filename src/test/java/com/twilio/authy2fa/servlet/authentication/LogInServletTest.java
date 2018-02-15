@@ -1,6 +1,6 @@
 package com.twilio.authy2fa.servlet.authentication;
 
-import com.authy.AuthyApiClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twilio.authy2fa.exception.ApprovalRequestException;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
@@ -56,7 +56,8 @@ public class LogInServletTest {
         mockServletOutputStream = new MockServletOutputStream();
         when(response.getOutputStream()).thenReturn(mockServletOutputStream);
 
-        subject = new LogInServlet(sessionManager, userService, approvalRequestService);
+        subject = new LogInServlet(sessionManager, userService, approvalRequestService,
+                new ObjectMapper());
     }
 
 
@@ -76,7 +77,8 @@ public class LogInServletTest {
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
         verify(approvalRequestService).sendApprovalRequest(any());
-        assertEquals("sms", mockServletOutputStream.toString());
+        assertEquals("{\"result\":\"SMS\",\"message\":null}",
+                mockServletOutputStream.toString());
     }
 
     @Test
@@ -94,7 +96,8 @@ public class LogInServletTest {
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
         verify(approvalRequestService).sendApprovalRequest(any());
-        assertEquals("unexpectedError", mockServletOutputStream.toString());
+        assertEquals("{\"result\":\"ERROR\",\"message\":\"exception message\"}",
+                mockServletOutputStream.toString());
     }
 
     @Test
@@ -109,6 +112,7 @@ public class LogInServletTest {
         // Then
         verify(sessionManager, never()).partialLogIn(request, user.getId());
         verify(approvalRequestService, never()).sendApprovalRequest(any());
-        assertEquals("unauthorized", mockServletOutputStream.toString());
+        assertEquals("{\"result\":\"ERROR\",\"message\":\"Invalid Credentials\"}",
+                mockServletOutputStream.toString());
     }
 }
