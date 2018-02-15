@@ -26,7 +26,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(Parameterized.class)
 public class RequestTokenServletTest {
     @Mock
     private HttpServletRequest request;
@@ -51,32 +50,16 @@ public class RequestTokenServletTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { "Ignored: SMS is not needed for smartphones.", "Authy SoftToken" },
-                { "Ok", "Authy OneCode" }
-        });
-    }
-
-    private String responseMessage;
-    private String expectedVerificationStrategy;
-
-    public RequestTokenServletTest(String responseMessage, String expectedVerificationStrategy) {
-        this.responseMessage = responseMessage;
-        this.expectedVerificationStrategy = expectedVerificationStrategy;
-    }
-
     @Test
     public void requestTokenThenDefineTheAppropriateVerificationStrategy() throws Exception {
-
+        // Given
         User alice = new User();
         alice.setAuthyId("800001");
         when(userService.find(anyLong())).thenReturn(alice);
         when(authyClient.getUsers()).thenReturn(users);
 
         Hash result = new Hash();
-        result.setMessage(responseMessage);
+        result.setMessage("Ok");
         when(users.requestSms(anyInt())).thenReturn(result);
 
         MockServletOutputStream servletOutputStream = new MockServletOutputStream();
@@ -84,9 +67,10 @@ public class RequestTokenServletTest {
 
         RequestTokenServlet servlet = new RequestTokenServlet(sessionManager, userService, authyClient);
 
+        // When
         servlet.doPost(request, response);
 
+        // Then
         verify(users, times(1)).requestSms(anyInt());
-        assertEquals(expectedVerificationStrategy, servletOutputStream.toString());
     }
 }

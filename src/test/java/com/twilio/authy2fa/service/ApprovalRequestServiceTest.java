@@ -2,10 +2,7 @@ package com.twilio.authy2fa.service;
 
 import com.authy.AuthyApiClient;
 import com.authy.OneTouchException;
-import com.authy.api.Hash;
-import com.authy.api.OneTouch;
-import com.authy.api.OneTouchResponse;
-import com.authy.api.Users;
+import com.authy.api.*;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.twilio.authy2fa.exception.ApprovalRequestException;
 import com.twilio.authy2fa.models.User;
@@ -43,6 +40,9 @@ public class ApprovalRequestServiceTest {
 
     @Mock
     private Hash hash;
+
+    @Mock
+    private com.authy.api.Error error;
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(options().port(8085));
@@ -138,7 +138,8 @@ public class ApprovalRequestServiceTest {
                         .withStatus(200)
                         .withBody("{\"status\":{\"registered\":false}}")));
         when(hash.isSuccess()).thenReturn(false);
-        when(hash.getMessage()).thenReturn("message");
+        when(hash.getError()).thenReturn(error);
+        when(error.getMessage()).thenReturn("message");
 
         // When
         try {

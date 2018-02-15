@@ -49,8 +49,8 @@ $(document).ready(function() {
 
     var requestAuthyToken = function () {
         $.post("/authy/request-token")
-            .done(function (data) {
-                $("#authy-token-label").text(data);
+            .done(function () {
+                $("#authy-token").removeAttr("disabled");
             });
     }
 
