@@ -8,31 +8,28 @@ $(document).ready(function() {
 
     var authyVerification = function (data) {
         $.post("/login", data, function (result) {
-            resultActions[result]();
+            resultJson = JSON.parse(result);
+            resultActions[resultJson.result](resultJson.message);
         });
     };
 
     var resultActions = {
-        onetouch: function() {
+        ONETOUCH: function() {
             $("#authy-modal").modal({ backdrop: "static" }, "show");
             $(".auth-token").hide();
             $(".auth-onetouch").fadeIn();
             monitorOneTouchStatus();
         },
 
-        sms: function () {
+        SMS: function () {
             $("#authy-modal").modal({ backdrop: "static" }, "show");
             $(".auth-onetouch").hide();
             $(".auth-token").fadeIn();
             requestAuthyToken();
         },
 
-        unauthorized: function () {
-            $("#error-message").text("Invalid credentials");
-        },
-
-        unexpectedError: function () {
-            $("#error-message").text("Unexpected error. Check the logs");
+        ERROR: function (message) {
+            $("#error-message").text(message);
         }
     };
 
@@ -49,8 +46,8 @@ $(document).ready(function() {
 
     var requestAuthyToken = function () {
         $.post("/authy/request-token")
-            .done(function (data) {
-                $("#authy-token-label").text(data);
+            .done(function () {
+                $("#authy-token").removeAttr("disabled");
             });
     }
 

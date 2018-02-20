@@ -22,10 +22,12 @@ public class ApprovalRequestService {
 
     private final ConfigurationService configuration;
     private final AuthyApiClient client;
+    private final ObjectMapper objectMapper;
 
     public ApprovalRequestService() {
         this.authyBaseURL =  "https://api.authy.com";
         this.configuration = new ConfigurationService();
+        this.objectMapper = new ObjectMapper();
         this.client = new AuthyApiClient(configuration.authyApiKey());
     }
 
@@ -33,6 +35,7 @@ public class ApprovalRequestService {
         this.authyBaseURL = authyBaseURL;
         this.configuration = configuration;
         this.client = client;
+        this.objectMapper = new ObjectMapper();
     }
 
     public String sendApprovalRequest(User user) {
@@ -49,14 +52,13 @@ public class ApprovalRequestService {
         } else {
             Hash result = sendSMSToken(user);
             if(!result.isSuccess()) {
-                throw new ApprovalRequestException(result.getMessage());
+                throw new ApprovalRequestException(result.getError().getMessage());
             }
             return "sms";
         }
     }
 
     private boolean hasAuthyApp(User user) {
-        ObjectMapper objectMapper = new ObjectMapper();
         String url = String.format(AUTHY_USERS_URI_TEMPLATE,
                 authyBaseURL,
                 user.getAuthyId(),

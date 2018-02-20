@@ -41,10 +41,6 @@ public class RequestTokenServlet extends HttpServlet {
         long userId = sessionManager.getLoggedUserId(request);
         User user = userService.find(userId);
 
-        Hash result = authyClient.getUsers().requestSms(Integer.parseInt(user.getAuthyId()));
-        String verificationStrategy =
-                result.getMessage().contains("Ignored") ? "Authy SoftToken" : "Authy OneCode";
-
-        response.getOutputStream().write(verificationStrategy.getBytes());
+        authyClient.getUsers().requestSms(Integer.parseInt(user.getAuthyId()));
     }
 }

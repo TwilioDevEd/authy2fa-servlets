@@ -27,9 +27,9 @@
                 <p>Please enter your Token</p>
                 <form action="/authy/verify-code" method="POST">
                     <div class='form-group'>
-                        <label class="col-md-4 control-label" for="authy-token" id="authy-token-label">Authy Token</label>
+                        <label class="col-md-4 control-label" for="authy-token" id="authy-token-label">Authy OneCode</label>
                         <div class='col-md-6'>
-                            <input type="text" name="authy-token" id="authy-token" value="" class="form-control" autocomplete="off" />
+                            <input type="text" name="authy-token" id="authy-token" value="" class="form-control" autocomplete="off" disabled="disabled"/>
                         </div>
                     </div>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

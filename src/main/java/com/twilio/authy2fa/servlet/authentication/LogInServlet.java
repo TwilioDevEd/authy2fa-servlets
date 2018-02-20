@@ -1,6 +1,7 @@
 package com.twilio.authy2fa.servlet.authentication;
 
-import com.authy.AuthyApiClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twilio.authy2fa.exception.ApprovalRequestException;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.twilio.authy2fa.servlet.authentication.LoginResponse.*;
+
 @WebServlet(urlPatterns = {"/login"})
 public class LogInServlet extends HttpServlet {
 
@@ -24,20 +27,23 @@ public class LogInServlet extends HttpServlet {
     private final SessionManager sessionManager;
     private final UserService userService;
     private final ApprovalRequestService approvalRequestService;
+    private final ObjectMapper objectMapper;
 
     @SuppressWarnings("unused")
     public LogInServlet() {
         this(
                 new SessionManager(),
                 new UserService(),
-                new ApprovalRequestService());
+                new ApprovalRequestService(),
+                new ObjectMapper());
     }
 
     public LogInServlet(SessionManager sessionManager, UserService userService,
-                        ApprovalRequestService approvalRequestService) {
+                        ApprovalRequestService approvalRequestService, ObjectMapper objectMapper) {
         this.sessionManager = sessionManager;
         this.userService = userService;
         this.approvalRequestService = approvalRequestService;
+        this.objectMapper = objectMapper;
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,15 +63,29 @@ public class LogInServlet extends HttpServlet {
             try {
                 String verificationStrategy = approvalRequestService
                         .sendApprovalRequest(user);
-                response.getOutputStream().write(verificationStrategy.getBytes());
+                LoginResult loginResult =
+                        LoginResult.valueOf(verificationStrategy.toUpperCase());
+                response.getOutputStream().write(getResponseBytes(loginResult));
             } catch (ApprovalRequestException e) {
                 LOGGER.error(e.getMessage());
-                response.getOutputStream().write("unexpectedError".getBytes());
+                response.getOutputStream().write(
+                        getResponseBytes(LoginResult.ERROR, e.getMessage()));
             }
         } else {
-            response.getOutputStream().write("unauthorized".getBytes());
+            response.getOutputStream().write(
+                    getResponseBytes(LoginResult.ERROR, "Invalid Credentials"));
         }
     }
 
+    private byte[] getResponseBytes(LoginResult loginResult)
+            throws JsonProcessingException {
+        return getResponseBytes(loginResult, null);
+    }
 
+    private byte[] getResponseBytes(LoginResult result, String message)
+            throws JsonProcessingException {
+        LoginResponse loginResponse = new LoginResponse(
+                result, message);
+        return objectMapper.writeValueAsString(loginResponse).getBytes();
+    }
 }
