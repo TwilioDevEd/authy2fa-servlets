@@ -2,8 +2,10 @@ package com.twilio.authy2fa.servlet.authy;
 
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
+import com.twilio.authy2fa.servlet.requestvalidation.AuthyRequestValidator;
 import com.twilio.authy2fa.servlet.requestvalidation.RequestValidationResult;
-import com.twilio.authy2fa.servlet.requestvalidation.RequestValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +17,10 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/authy/callback"})
 public class CallbackServlet extends HttpServlet {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallbackServlet.class);
+
     private final UserService userService;
+
 
     @SuppressWarnings("unused")
     public CallbackServlet() {
@@ -29,16 +34,18 @@ public class CallbackServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        RequestValidator validator = new RequestValidator(System.getenv("AUTHY_API_KEY"), request);
+        AuthyRequestValidator validator = new AuthyRequestValidator(
+                System.getenv("AUTHY_API_KEY"), request);
         RequestValidationResult validationResult = validator.validate();
 
-        if (validationResult.isValid()) {
-
+        if (validationResult.isValidSignature()) {
             // Handle approved, denied, unauthorized
             User user = userService.findByAuthyId(validationResult.getAuthyId());
             user.setAuthyStatus(validationResult.getStatus());
 
             userService.update(user);
+        } else {
+            LOGGER.error("Received Authy callback but couldn't verify the signature");
         }
     }
 }
