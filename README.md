@@ -32,8 +32,9 @@ as the two-factor authentication provider using Servlets.
 
    You'll need to set `JDBC_URL`, `DB_USERNAME`, and `DB_PASSWORD`.
 
-   You can find your `AUTHY_API_KEY` in your
-   [Authy Dashboard](https://dashboard.authy.com).
+   You can find your `AUTHY_API_KEY` in an application in the
+   [Authy Console](https://www.twilio.com/console/authy/applications), under 
+   'Settings'.
 
    Once you have populated all the values, load the variables with `source`.
 
@@ -56,11 +57,15 @@ as the two-factor authentication provider using Servlets.
 
 1. Check it out at [http://localhost:8080/](http://localhost:8080/)
 
+## Enabling Push Authentication Support
+
 1. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
 
    ```bash
    $ ngrok http 8080
    ```
+
+1. In the 'Push Authentication' section of the sidebar, add your publicly accessible url with `/authy/callback` appended.
 
 ## Run the tests
 
