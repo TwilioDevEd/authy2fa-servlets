@@ -41,11 +41,15 @@ public class CallbackServlet extends HttpServlet {
         if (validationResult.isValidSignature()) {
             // Handle approved, denied, unauthorized
             User user = userService.findByAuthyId(validationResult.getAuthyId());
-            user.setAuthyStatus(validationResult.getStatus());
-
-            userService.update(user);
+            if(user != null) {
+                user.setAuthyStatus(validationResult.getStatus());
+                userService.update(user);
+            }
         } else {
+
             LOGGER.error("Received Authy callback but couldn't verify the signature");
+
+            response.sendError(403, "Invalid signature");
         }
     }
 }

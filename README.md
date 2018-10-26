@@ -17,7 +17,7 @@ as the two-factor authentication provider using Servlets.
 1. Create the database.
 
    ```bash
-   $ createdb authy2fa
+   $ createdb authy2fa_servlets
    ```
 
    _The application uses PostgreSQL as the persistence layer. If you
@@ -42,7 +42,8 @@ as the two-factor authentication provider using Servlets.
     $ source .env
     ```
 
-    _If you are using a different operating system, make sure that all the variables from the `.env` file are loaded into your environment._
+    _If you are using a different operating system, make sure that all the variables
+     from the `.env` file are loaded into your environment._
 
 1. Execute the migrations.
 
@@ -57,15 +58,18 @@ as the two-factor authentication provider using Servlets.
 
 1. Check it out at [http://localhost:8080/](http://localhost:8080/)
 
-## Enabling Push Authentication Support
+## Enabling OneTouch Verification Support
 
-1. To enable Authy OneTouch to use the callback endpoint you exposed, your development server will need to be publicly accessible. [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
+1. To enable Authy OneTouch to use the callback endpoint you exposed,
+your development server will need to be publicly accessible.
+ [We recommend using ngrok to solve this problem](//www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
 
    ```bash
    $ ngrok http 8080
    ```
 
-1. In the 'Push Authentication' section of the sidebar, add your publicly accessible url with `/authy/callback` appended.
+1. In the [Authy Dashboard](https://dashboard.authy.com/), go to `settings` > `OneTouch Settings`
+ and add your publicly accessible url with `/authy/callback` appended.
 
 ## Run the tests
 

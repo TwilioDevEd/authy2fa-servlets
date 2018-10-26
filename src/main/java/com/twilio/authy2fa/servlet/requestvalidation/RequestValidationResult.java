@@ -4,14 +4,14 @@ public class RequestValidationResult {
 
     private String status;
     private Boolean validSignature;
-    private String authyId;
+    private int authyId;
 
     public RequestValidationResult(String status, Boolean validSignature) {
         this.status = status;
         this.validSignature = validSignature;
     }
 
-    public RequestValidationResult(String status, Boolean validSignature, String authyId) {
+    public RequestValidationResult(String status, Boolean validSignature, int authyId) {
         this.status = status;
         this.authyId = authyId;
         this.validSignature = validSignature;
@@ -21,7 +21,7 @@ public class RequestValidationResult {
         return validSignature;
     }
 
-    public String getAuthyId() {
+    public int getAuthyId() {
         return authyId;
     }
 

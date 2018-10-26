@@ -57,7 +57,7 @@ public class VerifyCodeServletTest {
 
         User alice = new User();
         alice.setId(1101);
-        alice.setAuthyId("800001");
+        alice.setAuthyId(800001);
         when(userService.find(anyLong())).thenReturn(alice);
         when(authyClient.getTokens()).thenReturn(tokens);
 
@@ -76,7 +76,7 @@ public class VerifyCodeServletTest {
 
         User alice = new User();
         alice.setId(1101);
-        alice.setAuthyId("800001");
+        alice.setAuthyId(800001);
         when(userService.find(anyLong())).thenReturn(alice);
         when(authyClient.getTokens()).thenReturn(tokens);
 
