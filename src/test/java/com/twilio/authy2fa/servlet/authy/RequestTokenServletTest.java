@@ -54,7 +54,7 @@ public class RequestTokenServletTest {
     public void requestTokenThenDefineTheAppropriateVerificationStrategy() throws Exception {
         // Given
         User alice = new User();
-        alice.setAuthyId("800001");
+        alice.setAuthyId(800001);
         when(userService.find(anyLong())).thenReturn(alice);
         when(authyClient.getUsers()).thenReturn(users);
 

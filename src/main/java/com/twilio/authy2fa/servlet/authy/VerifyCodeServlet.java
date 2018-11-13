@@ -1,6 +1,7 @@
 package com.twilio.authy2fa.servlet.authy;
 
 import com.authy.AuthyApiClient;
+import com.authy.AuthyException;
 import com.authy.api.Token;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
@@ -43,14 +44,18 @@ public class VerifyCodeServlet extends HttpServlet {
 
         String authyToken = request.getParameter("authy-token");
 
-        Token token = authyClient.getTokens().verify(Integer.parseInt(user.getAuthyId()), authyToken);
-        if (token.isOk()) {
-            sessionManager.logIn(request, user.getId());
-            response.sendRedirect("/account");
-        } else {
-            sessionManager.logOut(request);
-            request.setAttribute("data", "Token was invalid");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+        try {
+            Token token = authyClient.getTokens().verify(user.getAuthyId(), authyToken);
+            if (token.isOk()) {
+                sessionManager.logIn(request, user.getId());
+                response.sendRedirect("/account");
+            } else {
+                sessionManager.logOut(request);
+                request.setAttribute("data", "Token was invalid");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            }
+        } catch (AuthyException e) {
+            throw new IOException(e);
         }
     }
 }

@@ -2,11 +2,11 @@ package com.twilio.authy2fa.servlet.authentication;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twilio.authy2fa.exception.ApprovalRequestException;
+import com.twilio.authy2fa.exception.AuthyRequestException;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
-import com.twilio.authy2fa.service.ApprovalRequestService;
+import com.twilio.authy2fa.service.AuthyRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class LogInServlet extends HttpServlet {
 
     private final SessionManager sessionManager;
     private final UserService userService;
-    private final ApprovalRequestService approvalRequestService;
+    private final AuthyRequestService authyRequestService;
     private final ObjectMapper objectMapper;
 
     @SuppressWarnings("unused")
@@ -34,15 +34,15 @@ public class LogInServlet extends HttpServlet {
         this(
                 new SessionManager(),
                 new UserService(),
-                new ApprovalRequestService(),
+                new AuthyRequestService(),
                 new ObjectMapper());
     }
 
     public LogInServlet(SessionManager sessionManager, UserService userService,
-                        ApprovalRequestService approvalRequestService, ObjectMapper objectMapper) {
+                        AuthyRequestService authyRequestService, ObjectMapper objectMapper) {
         this.sessionManager = sessionManager;
         this.userService = userService;
-        this.approvalRequestService = approvalRequestService;
+        this.authyRequestService = authyRequestService;
         this.objectMapper = objectMapper;
     }
 
@@ -60,13 +60,15 @@ public class LogInServlet extends HttpServlet {
         User user = userService.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
             sessionManager.partialLogIn(request, user.getId());
+            user.setAuthyStatus("");
+            userService.update(user);
             try {
-                String verificationStrategy = approvalRequestService
+                String verificationStrategy = authyRequestService
                         .sendApprovalRequest(user);
                 LoginResult loginResult =
                         LoginResult.valueOf(verificationStrategy.toUpperCase());
                 response.getOutputStream().write(getResponseBytes(loginResult));
-            } catch (ApprovalRequestException e) {
+            } catch (AuthyRequestException e) {
                 LOGGER.error(e.getMessage());
                 response.getOutputStream().write(
                         getResponseBytes(LoginResult.ERROR, e.getMessage()));

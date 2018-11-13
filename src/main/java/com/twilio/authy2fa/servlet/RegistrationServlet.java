@@ -1,10 +1,14 @@
 package com.twilio.authy2fa.servlet;
 
 import com.authy.AuthyApiClient;
+import com.twilio.authy2fa.exception.AuthyRequestException;
 import com.twilio.authy2fa.lib.RequestParametersValidator;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
 import com.twilio.authy2fa.lib.SessionManager;
+import com.twilio.authy2fa.service.AuthyRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,21 +22,25 @@ public class RegistrationServlet extends HttpServlet{
 
     private final SessionManager sessionManager;
     private final UserService userService;
-    private final AuthyApiClient authyClient;
+    private final AuthyRequestService authyRequestService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationServlet.class);
+
 
     @SuppressWarnings("unused")
     public RegistrationServlet() {
         this(
                 new SessionManager(),
                 new UserService(),
-                new AuthyApiClient(System.getenv("AUTHY_API_KEY"))
+                new AuthyRequestService()
         );
     }
 
-    public RegistrationServlet(SessionManager sessionManager, UserService userService, AuthyApiClient authyClient) {
+    public RegistrationServlet(SessionManager sessionManager, UserService userService,
+                               AuthyRequestService authyRequestService) {
         this.sessionManager = sessionManager;
         this.userService = userService;
-        this.authyClient = authyClient;
+        this.authyRequestService = authyRequestService;
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -52,17 +60,20 @@ public class RegistrationServlet extends HttpServlet{
 
         if (validateRequest(request)) {
 
-            User user = userService.create(new User(name, email, password, countryCode, phoneNumber));
+            try {
+                int authyId = authyRequestService.sendRegistrationRequest(email, phoneNumber, countryCode);
 
-            com.authy.api.User authyUser = authyClient.getUsers().createUser(email, phoneNumber, countryCode);
+                userService.create(new User(name, email, password, countryCode, phoneNumber, authyId));
 
-            if (authyUser.isOk()) {
-                user.setAuthyId(Integer.toString(authyUser.getId()));
-                userService.update(user);
+                response.sendRedirect("/login.jsp");
+            } catch (AuthyRequestException e) {
+
+                LOGGER.error(e.getMessage());
+
+                request.setAttribute("data", "Registration failed");
+                preserveStatusRequest(request, name, email, countryCode, phoneNumber);
+                request.getRequestDispatcher("/registration.jsp").forward(request, response);
             }
-
-            sessionManager.logIn(request, user.getId());
-            response.sendRedirect("/account");
         } else {
             preserveStatusRequest(request, name, email, countryCode, phoneNumber);
             request.getRequestDispatcher("/registration.jsp").forward(request, response);

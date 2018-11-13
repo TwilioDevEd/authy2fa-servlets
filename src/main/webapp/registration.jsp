@@ -22,6 +22,8 @@
         <h1>We're going to be *BEST* friends</h1>
         <p> Thanks for your interest in signing up! Can you tell us a bit about yourself?</p>
 
+        <p id="error-message" class="text-danger">${data}</p>
+
         <form action="registration" method="post">
           <div class="form-group">
             <label for="name">Tell us your name:</label>

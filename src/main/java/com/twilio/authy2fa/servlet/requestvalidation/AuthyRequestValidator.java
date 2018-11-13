@@ -92,8 +92,8 @@ public class AuthyRequestValidator {
         }
 
         String status = isValidSignature ? bodyJson.get("status").toString() : UNAUTHORIZED;
-        RequestValidationResult result = new RequestValidationResult(
-                status, isValidSignature, bodyJson.get("authy_id").toString());
+        int authyId = Integer.parseInt(bodyJson.get("authy_id").toString());
+        RequestValidationResult result = new RequestValidationResult(status, isValidSignature, authyId);
 
         return result;
     }
@@ -144,8 +144,11 @@ class FlatMap {
         } else if(value instanceof String) {
             try {
                 String encodedValue = URLEncoder.encode((String) value, "UTF-8");
-                return Stream.of(new AbstractMap.SimpleEntry<>(e.getKey(),
-                        encodedValue.replace(" ", "+")));
+                String encodedKey = URLEncoder.encode((String) e.getKey(), "UTF-8");
+                return Stream.of(new AbstractMap.SimpleEntry<>(
+                        encodedKey.replace(" ", "+"),
+                        encodedValue.replace(" ", "+")
+                ));
             } catch (UnsupportedEncodingException exception) {
                 throw new RuntimeException(exception);
             }

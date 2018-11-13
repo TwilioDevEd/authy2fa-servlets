@@ -1,11 +1,11 @@
 package com.twilio.authy2fa.servlet.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twilio.authy2fa.exception.ApprovalRequestException;
+import com.twilio.authy2fa.exception.AuthyRequestException;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
-import com.twilio.authy2fa.service.ApprovalRequestService;
+import com.twilio.authy2fa.service.AuthyRequestService;
 import lib.MockServletOutputStream;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class LogInServletTest {
     private UserService userService;
 
     @Mock
-    private ApprovalRequestService approvalRequestService;
+    private AuthyRequestService authyRequestService;
 
     private MockServletOutputStream mockServletOutputStream;
 
@@ -56,7 +56,7 @@ public class LogInServletTest {
         mockServletOutputStream = new MockServletOutputStream();
         when(response.getOutputStream()).thenReturn(mockServletOutputStream);
 
-        subject = new LogInServlet(sessionManager, userService, approvalRequestService,
+        subject = new LogInServlet(sessionManager, userService, authyRequestService,
                 new ObjectMapper());
     }
 
@@ -68,7 +68,7 @@ public class LogInServletTest {
         when(request.getParameter("password")).thenReturn(password);
         when(userService.findByEmail(anyString())).thenReturn(user);
 
-        when(approvalRequestService.sendApprovalRequest(user))
+        when(authyRequestService.sendApprovalRequest(user))
                 .thenReturn("sms");
 
         // When
@@ -76,7 +76,7 @@ public class LogInServletTest {
 
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
-        verify(approvalRequestService).sendApprovalRequest(any());
+        verify(authyRequestService).sendApprovalRequest(any());
         assertEquals("{\"result\":\"SMS\",\"message\":null}",
                 mockServletOutputStream.toString());
     }
@@ -87,15 +87,15 @@ public class LogInServletTest {
         // Given
         when(request.getParameter("password")).thenReturn(password);
         when(userService.findByEmail(anyString())).thenReturn(user);
-        when(approvalRequestService.sendApprovalRequest(user))
-                .thenThrow(new ApprovalRequestException("exception message"));
+        when(authyRequestService.sendApprovalRequest(user))
+                .thenThrow(new AuthyRequestException("exception message"));
 
         // When
         subject.doPost(request, response);
 
         // Then
         verify(sessionManager).partialLogIn(request, user.getId());
-        verify(approvalRequestService).sendApprovalRequest(any());
+        verify(authyRequestService).sendApprovalRequest(any());
         assertEquals("{\"result\":\"ERROR\",\"message\":\"exception message\"}",
                 mockServletOutputStream.toString());
     }
@@ -111,7 +111,7 @@ public class LogInServletTest {
 
         // Then
         verify(sessionManager, never()).partialLogIn(request, user.getId());
-        verify(approvalRequestService, never()).sendApprovalRequest(any());
+        verify(authyRequestService, never()).sendApprovalRequest(any());
         assertEquals("{\"result\":\"ERROR\",\"message\":\"Invalid Credentials\"}",
                 mockServletOutputStream.toString());
     }

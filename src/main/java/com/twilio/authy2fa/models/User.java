@@ -27,7 +27,7 @@ public class User {
     private String phoneNumber;
 
     @Column(name = "authy_id")
-    private String authyId;
+    private Integer authyId;
 
     @Column(name = "authy_status")
     private String authyStatus;
@@ -43,13 +43,14 @@ public class User {
             String email,
             String password,
             String countryCode,
-            String phoneNumber) {
+            String phoneNumber,
+            int authyId) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.countryCode = countryCode;
         this.phoneNumber = phoneNumber;
-        this.authyId = "";
+        this.authyId = authyId;
         this.authyStatus = "";
         this.date = new Date();
     }
@@ -102,11 +103,11 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAuthyId() {
+    public int getAuthyId() {
         return authyId;
     }
 
-    public void setAuthyId(String authyId) {
+    public void setAuthyId(Integer authyId) {
         this.authyId = authyId;
     }
 

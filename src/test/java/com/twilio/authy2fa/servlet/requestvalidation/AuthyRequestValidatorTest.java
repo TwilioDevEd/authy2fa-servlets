@@ -115,7 +115,7 @@ public class AuthyRequestValidatorTest {
         RequestValidationResult result = validator.validate();
 
         assertEquals(expected, result.getStatus());
-        assertEquals("12345", result.getAuthyId());
+        assertEquals(12345, result.getAuthyId());
         assertEquals((Boolean) expectedValidity, result.isValidSignature());
     }
 }

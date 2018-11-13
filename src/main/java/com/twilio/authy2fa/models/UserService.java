@@ -1,9 +1,6 @@
 package com.twilio.authy2fa.models;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +9,8 @@ public class UserService {
 
     public UserService() {
         Map<String, String> config = loadConfFromEnvironment();
-        this.entityManager = Persistence.createEntityManagerFactory("Authy2FA", config).createEntityManager();
+        this.entityManager = Persistence.createEntityManagerFactory("Authy2FA", config)
+                .createEntityManager();
     }
 
     public User find(long id) {
@@ -37,7 +35,7 @@ public class UserService {
         return user;
     }
 
-    public User findByAuthyId(String authyId) {
+    public User findByAuthyId(int authyId) {
         User user = null;
 
         try {
@@ -71,17 +69,20 @@ public class UserService {
         return entityManager.getTransaction();
     }
 
-    public Map<String, String> loadConfFromEnvironment() {
+    private Map<String, String> loadConfFromEnvironment() {
         Map<String, String> env = System.getenv();
         Map<String, String> config = new HashMap<>();
-        for (String key : env.keySet()) {
-            if (key.contains("DB_USER")) {
-                config.put("javax.persistence.jdbc.user", env.get(key));
-            }
 
-            if (key.contains("DB_PASSWORD")) {
-                config.put("javax.persistence.jdbc.password", env.get(key));
-            }
+        if(env.containsKey("DB_USERNAME")) {
+            config.put("javax.persistence.jdbc.user", env.get("DB_USERNAME"));
+        }
+
+        if(env.containsKey("DB_PASSWORD")) {
+            config.put("javax.persistence.jdbc.password", env.get("DB_PASSWORD"));
+        }
+
+        if(env.containsKey("JDBC_URL")) {
+            config.put("javax.persistence.jdbc.url", env.get("JDBC_URL"));
         }
 
         return config;

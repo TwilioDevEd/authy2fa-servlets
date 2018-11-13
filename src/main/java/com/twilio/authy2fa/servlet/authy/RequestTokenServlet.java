@@ -1,7 +1,7 @@
 package com.twilio.authy2fa.servlet.authy;
 
 import com.authy.AuthyApiClient;
-import com.authy.api.Hash;
+import com.authy.AuthyException;
 import com.twilio.authy2fa.lib.SessionManager;
 import com.twilio.authy2fa.models.User;
 import com.twilio.authy2fa.models.UserService;
@@ -41,6 +41,10 @@ public class RequestTokenServlet extends HttpServlet {
         long userId = sessionManager.getLoggedUserId(request);
         User user = userService.find(userId);
 
-        authyClient.getUsers().requestSms(Integer.parseInt(user.getAuthyId()));
+        try {
+            authyClient.getUsers().requestSms(user.getAuthyId());
+        } catch (AuthyException e) {
+            throw new IOException(e);
+        }
     }
 }

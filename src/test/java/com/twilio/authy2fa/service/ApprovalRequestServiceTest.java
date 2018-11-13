@@ -1,10 +1,10 @@
 package com.twilio.authy2fa.service;
 
 import com.authy.AuthyApiClient;
-import com.authy.OneTouchException;
+import com.authy.AuthyException;
 import com.authy.api.*;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.twilio.authy2fa.exception.ApprovalRequestException;
+import com.twilio.authy2fa.exception.AuthyRequestException;
 import com.twilio.authy2fa.models.User;
 import org.junit.*;
 import org.mockito.Mock;
@@ -18,6 +18,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +37,9 @@ public class ApprovalRequestServiceTest {
     private Users users;
 
     @Mock
+    private UserStatus userStatus;
+
+    @Mock
     private OneTouchResponse oneTouchResponse;
 
     @Mock
@@ -49,24 +53,18 @@ public class ApprovalRequestServiceTest {
 
     private static final Integer authyid = 123;
     private static final String apiKey = "apiKey";
-    private static String authyUri;
 
-    private ApprovalRequestService subject;
+    private AuthyRequestService subject;
+
     private User user;
 
-    @BeforeClass
-    public static void setUpClass(){
-        authyUri = String.format("/protected/json/users/%s/status?api_key=%s", authyid,
-                apiKey);
-    }
-
     @Before
-    public void setUp() throws OneTouchException {
+    public void setUp() throws AuthyException {
         MockitoAnnotations.initMocks(this);
 
-        subject = new ApprovalRequestService("http://localhost:8085", configuration, client);
+        subject = new AuthyRequestService(configuration, client);
         user = new User();
-        user.setAuthyId(String.valueOf(authyid));
+        user.setAuthyId(authyid);
         user.setEmail("email");
         when(configuration.authyApiKey()).thenReturn(apiKey);
         when(client.getOneTouch()).thenReturn(oneTouch);
@@ -76,12 +74,11 @@ public class ApprovalRequestServiceTest {
     }
 
     @Test
-    public void sendApprovalRequestWithOneTouch() throws OneTouchException {
+    public void sendApprovalRequestWithOneTouch() throws AuthyException {
         // Given
-        stubFor(get(urlEqualTo(authyUri))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{\"status\":{\"registered\":true}}")));
+        when(client.getUsers()).thenReturn(users);
+        when(users.requestStatus(anyInt())).thenReturn(userStatus);
+        when(userStatus.isRegistered()).thenReturn(true);
         when(oneTouchResponse.isSuccess()).thenReturn(true);
 
         // When
@@ -93,12 +90,11 @@ public class ApprovalRequestServiceTest {
     }
 
     @Test
-    public void sendApprovalRequestWithOneTouchThrowsExceptionForFailedRequest() throws OneTouchException {
+    public void sendApprovalRequestWithOneTouchThrowsExceptionForFailedRequest() throws AuthyException {
         // Given
-        stubFor(get(urlEqualTo(authyUri))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{\"status\":{\"registered\":true}}")));
+        when(client.getUsers()).thenReturn(users);
+        when(users.requestStatus(anyInt())).thenReturn(userStatus);
+        when(userStatus.isRegistered()).thenReturn(true);
         when(oneTouchResponse.isSuccess()).thenReturn(false);
         when(oneTouchResponse.getMessage()).thenReturn("message");
 
@@ -106,7 +102,7 @@ public class ApprovalRequestServiceTest {
         try {
             subject.sendApprovalRequest(user);
             fail("Exception expected");
-        } catch(ApprovalRequestException e) {
+        } catch(AuthyRequestException e) {
             // Then
             assertEquals(e.getMessage(), "message");
             verify(oneTouch).sendApprovalRequest(any());
@@ -114,12 +110,11 @@ public class ApprovalRequestServiceTest {
     }
 
     @Test
-    public void sendApprovalRequestWithSMS() {
+    public void sendApprovalRequestWithSMS() throws AuthyException {
         // Given
-        stubFor(get(urlEqualTo(authyUri))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{\"status\":{\"registered\":false}}")));
+        when(client.getUsers()).thenReturn(users);
+        when(users.requestStatus(anyInt())).thenReturn(userStatus);
+        when(userStatus.isRegistered()).thenReturn(false);
         when(hash.isSuccess()).thenReturn(true);
 
         // When
@@ -131,12 +126,11 @@ public class ApprovalRequestServiceTest {
     }
 
     @Test
-    public void sendApprovalRequestWithSmsThrowsExceptionForFailedRequest() throws OneTouchException {
+    public void sendApprovalRequestWithSmsThrowsExceptionForFailedRequest() throws AuthyException {
         // Given
-        stubFor(get(urlEqualTo(authyUri))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{\"status\":{\"registered\":false}}")));
+        when(client.getUsers()).thenReturn(users);
+        when(users.requestStatus(anyInt())).thenReturn(userStatus);
+        when(userStatus.isRegistered()).thenReturn(false);
         when(hash.isSuccess()).thenReturn(false);
         when(hash.getError()).thenReturn(error);
         when(error.getMessage()).thenReturn("message");
@@ -145,7 +139,7 @@ public class ApprovalRequestServiceTest {
         try {
             subject.sendApprovalRequest(user);
             fail("Exception expected");
-        } catch(ApprovalRequestException e) {
+        } catch(AuthyRequestException e) {
             // Then
             assertEquals(e.getMessage(), "message");
             verify(users).requestSms(authyid);
