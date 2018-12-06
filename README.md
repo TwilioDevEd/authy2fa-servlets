@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/TwilioDevEd/authy2fa-servlets.svg?branch=master)](https://travis-ci.org/TwilioDevEd/authy2fa-servlets)
 
-This application example demonstrates how to use [Authy](http://www.authy.com)
+This application example demonstrates how to use [Authy](http://www.twilio.com/authy)
 as the two-factor authentication provider using Servlets.
 
 ## Local Development
@@ -68,8 +68,10 @@ your development server will need to be publicly accessible.
    $ ngrok http 8080
    ```
 
-1. In the [Authy Dashboard](https://dashboard.authy.com/), go to `settings` > `OneTouch Settings`
+1. In the [Authy Console](https://www.twilio.com/console/authy), select your application, go to `Push Authentication`,
  and add your publicly accessible url with `/authy/callback` appended.
+ 
+ <img width="1165" alt="screen shot 2018-12-06 at 11 28 43 am" src="https://user-images.githubusercontent.com/3673341/49601005-4b3d3a00-f94a-11e8-93a4-787b85543bd7.png">
 
 ## Run the tests
 
