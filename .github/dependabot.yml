@@ -1,0 +1,25 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/."
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.fasterxml.jackson.core:jackson-databind
+    versions:
+    - 2.10.0.pr1
+  - dependency-name: org.postgresql:postgresql
+    versions:
+    - 42.2.18
+    - 42.2.19
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - 9.4.20.v20190813
+    - 9.4.38.v20210224
+  - dependency-name: org.json:json
+    versions:
+    - "20201115"
+  - dependency-name: org.eclipse.jetty:jetty-maven-plugin
+    versions:
+    - 11.0.0
